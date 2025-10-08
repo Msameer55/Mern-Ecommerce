@@ -4,6 +4,26 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 const FilterSidebar = () => {
   const navigate = useNavigate();
 
+  const resetFilters = () => {
+    console.log("testt")
+    const resetValues = {
+      category: "",
+      gender: "",
+      color: "",
+      sizes: [],
+      brand: [],
+      material: [],
+      minPrice: 0,
+      maxPrice: 100,
+    };
+
+    setFilters(resetValues);
+    setPriceRange([0, 100]);
+
+    setSearchParams({});
+    navigate(window.location.pathname); 
+  }
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
     category: "",
@@ -109,7 +129,11 @@ const FilterSidebar = () => {
   return (
     <div className="filter-sidebar-main-container">
       <div className="">
-        <h4 className="font-semibold text-gray-700 mb-4">Filters</h4>
+        <div className="flex justify-between items-center  mb-4">
+          <h4 className="font-semibold text-gray-700">Filters</h4>
+          <button onClick={resetFilters} className="font-semibold text-xs text-gray-700 underline cursor-pointer">Reset Filters</button>
+        </div>
+
 
         {/* Category Filter  */}
         <div className="mb-6">
@@ -167,11 +191,10 @@ const FilterSidebar = () => {
               key={color}
               type="buttons"
               name="color"
-              className={`mr-2 w-8 h-8 rounded-full ${
-                filters.color === color
-                  ? "border-2 border-black"
-                  : "border border-gray-300"
-              }`}
+              className={`mr-2 w-8 h-8 rounded-full ${filters.color === color
+                ? "border-2 border-black"
+                : "border border-gray-300"
+                }`}
               value={color}
               onClick={handleFilterChange}
               style={{ backgroundColor: color.toLowerCase() }}
@@ -186,7 +209,7 @@ const FilterSidebar = () => {
             <div key={size} className="flex items-center mb-1">
               <input
                 type="checkbox"
-                name="size"
+                name="sizes"
                 className="mr-2"
                 value={size}
                 onChange={handleFilterChange}
@@ -208,7 +231,7 @@ const FilterSidebar = () => {
                 className="mr-2"
                 value={brand}
                 onChange={handleFilterChange}
-                 checked={filters.brand.includes(brand)}
+                checked={filters.brand.includes(brand)}
               />
               <span>{brand}</span>
             </div>

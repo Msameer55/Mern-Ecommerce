@@ -18,8 +18,8 @@ const App = () => {
           {/* User Layout */}
           <Route path="/" element={<UserLayout />}>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/profile" element={<Profile />} />
-            <Route exact path="/collections/:collection" element={<CollectionPage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/collections/:collection" element={<CollectionPage />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

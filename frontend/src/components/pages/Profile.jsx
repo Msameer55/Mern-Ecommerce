@@ -7,7 +7,7 @@ const Profile = () => {
     <div className="profile-main-container my-10">
       <div className="inner-container container mx-auto max-w-6xl">
         <div className="flex justify-between items-start">
-          <div className="w-[30%]">
+          <div className="w-[25%]">
             <div className="admin-details p-5 shadow-md flex flex-col space-y-3 items-center">
               <h2 className="font-bold text-2xl">Admin User</h2>
               <p className="font-normal text-lg">admin@example.com</p>
@@ -16,7 +16,7 @@ const Profile = () => {
               </button>
             </div>
           </div>
-          <div className="w-[65%]">
+          <div className="w-[74%]">
             <MyOrder />
           </div>
         </div>

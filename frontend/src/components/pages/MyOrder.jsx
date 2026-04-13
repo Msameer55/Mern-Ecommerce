@@ -1,41 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { mockOrders } from "../fakeData/ProductData";
+import { useNavigate } from "react-router-dom";
 
 const MyOrder = () => {
-  const [orders, setOrders] = useState([]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const mockOrders = [
-        {
-          _id: 1,
-          createdAt: new Date(),
-          shippingAddress: { city: "Karachi", country: "Pakistan" },
-          orderItems: [
-            {
-              name: "Product 1",
-              image: "https://picsum.photos/500/500?random=111",
-            },
-          ],
-          totalPrice: 100,
-          isPaid: true,
-        },
-        {
-          _id: 2,
-          createdAt: new Date(),
-          shippingAddress: { city: "Karachi", country: "Pakistan" },
-          orderItems: [
-            {
-              name: "Product 2",
-              image: "https://picsum.photos/500/500?random=11",
-            },
-          ],
-          totalPrice: 600,
-          isPaid: false,
-        },
-      ];
-      setOrders(mockOrders);
-    }, 1000);
-  }, []);
+  const [orders, setOrders] = useState(mockOrders);
+  const navigate = useNavigate();
 
   return (
     <div className="my-order-container w-full p-4">
@@ -59,7 +28,8 @@ const MyOrder = () => {
               {orders.map((order) => (
                 <tr
                   key={order._id}
-                  className="border-b hover:bg-gray-50 transition duration-200"
+                  className="border-b hover:bg-gray-50 transition duration-200 cursor-pointer"
+                  onClick={() => navigate(`/order/${order.id}`)}
                 >
                   <td className="py-3 px-4">
                     <img
@@ -75,14 +45,9 @@ const MyOrder = () => {
                     {order.createdAt.toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4 text-gray-600">
-                    {
-                        (order.shippingAddress ?
-                         `${order.shippingAddress.city}, ${order.shippingAddress.country}`
-                         : 
-                         "N/A"
-                        )
-                    }
-                   
+                    {order.shippingAddress
+                      ? `${order.shippingAddress.city}, ${order.shippingAddress.country}`
+                      : "N/A"}
                   </td>
                   <td className="py-3 px-4 text-gray-700">
                     {order.orderItems[0].name}

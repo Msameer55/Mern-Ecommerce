@@ -8,8 +8,8 @@ const Footer = () => {
   return (
     <div className="footer-main-container border-t border-gray-300">
       <div className="inner-container container mx-auto   p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-5  md:gap-10 items-start">
-          <div className=" col newsletter">
+        <div className="flex justify-between items-start">
+          <div className=" col newsletter w-[35%]">
             <h3 className="text-[16px] font-semibold ">Newsletter</h3>
             <p className="text-[14px] my-4">
               Be the first to hear about our new products, exclusive events and
@@ -35,7 +35,7 @@ const Footer = () => {
             </form>
           </div>
 
-          <div className=" col main-menus">
+          <div className=" col main-menus w-[25%]">
             <h3 className="text-[16px] font-semibold mb-5">Shop</h3>
             <ul>
               <li className="text-[14px] font-normal cursor-pointer ">
@@ -53,7 +53,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className=" col quick-links">
+          <div className=" col quick-links w-[25%]">
             <h3 className="text-[16px] font-semibold mb-5">Support</h3>
             <ul>
               <li className="text-[14px] font-normal cursor-pointer ">
@@ -69,7 +69,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className=" col social-links">
+          <div className=" col social-links w-[25%]">
             <h3 className="text-[16px] font-semibold mb-5">Follow Us</h3>
             <div className="flex justify-start gap-3 items-center mb-6">
               <BsTwitterX />

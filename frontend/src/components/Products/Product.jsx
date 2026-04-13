@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Product = ({ product }) => {
+  console.log(product, "product id ")
   const saveRs = Math.floor(product.comparePrice - product.price);
 
   const [selectedColor, setSelectedColor] = useState("");
@@ -19,14 +20,14 @@ const Product = ({ product }) => {
 
   return (
     <div className=" bg-white">
-      <NavLink to={`product/${product._id}`}>
+      <NavLink to={`product/${product.id}`}>
         <img
           src={product.images[0].url}
           alt={product.images[0].altText}
           className="w-full h-64 object-cover rounded mb-4"
         />
       </NavLink>
-      <NavLink to={`/product/${product._id}`}>
+      <NavLink to={`/product/${product.id}`}>
         <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
       </NavLink>
 

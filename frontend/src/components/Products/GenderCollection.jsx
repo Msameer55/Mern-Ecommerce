@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 const GenderCollection = ({ category }) => {
   const genderCollection = [
     {
-      _id: 1,
+      id: 1,
       category: "mens",
       link: "/mens-topwear",
       images: [
@@ -15,7 +15,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 2,
+      id: 2,
       category: "mens",
       link: "/mens-topwear",
       images: [
@@ -26,7 +26,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 3,
+      id: 3,
       category: "mens",
       link: "/mens-topwear",
       images: [
@@ -37,7 +37,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 4,
+      id: 4,
       category: "mens",
       link: "/mens-topwear",
       images: [
@@ -49,7 +49,7 @@ const GenderCollection = ({ category }) => {
     },
 
     {
-      _id: 5,
+      id: 5,
       category: "womens",
       link: "/mens-topwear",
       images: [
@@ -60,7 +60,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 6,
+      id: 6,
       category: "womens",
       link: "/mens-topwear",
       images: [
@@ -71,7 +71,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 7,
+      id: 7,
       category: "womens",
       link: "/mens-topwear",
       images: [
@@ -82,7 +82,7 @@ const GenderCollection = ({ category }) => {
       ],
     },
     {
-      _id: 8,
+      id: 8,
       category: "womens",
       link: "/mens-topwear",
       images: [

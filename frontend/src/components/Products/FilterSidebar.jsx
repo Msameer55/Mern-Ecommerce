@@ -75,7 +75,7 @@ const FilterSidebar = () => {
 
   // Convert Search Params into plain object
   useEffect(() => {
-    // Object.fromEntries gives key value pair of array of array [[name, Sameer], [age, 12]] => {name : "Sameer", age: 12}
+    // Object.fromEntries gives key value pair of array [[name, Sameer], [age, 12]] => {name : "Sameer", age: 12}
     const params = Object.fromEntries([...searchParams]);
     setFilters({
       category: params.category || "",

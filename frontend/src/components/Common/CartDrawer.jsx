@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import CartContents from "../Cart/CartContents";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const CartDrawer = ({ isDrawerOpen, toggleCartDrawer }) => {
+const CartDrawer = ({ isDrawerOpen, toggleCartDrawer, setIsDrawerOpen }) => {
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    navigate("/checkout");
+    setIsDrawerOpen(false);
+  };
+
   return (
     <>
       <div
@@ -31,7 +39,10 @@ const CartDrawer = ({ isDrawerOpen, toggleCartDrawer }) => {
         </div>
         {/* Checkout button */}
         <div className="pb-2 bg-white  fixed bottom-0 text-center top-auto mx-2 right-0 left-0">
-          <button className="cursor-pointer rounded-[6px] mb-4 bg-black text-white w-full h-[45px] text-[15px] font-medium">
+          <button
+            onClick={handleCheckout}
+            className="cursor-pointer rounded-[6px] mb-4 bg-black text-white w-full h-[45px] text-[15px] font-medium"
+          >
             Checkout
           </button>
           <p className="text-md tracking-tighter text-gray-800">

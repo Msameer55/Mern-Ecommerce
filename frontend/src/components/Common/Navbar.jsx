@@ -104,6 +104,7 @@ const Navbar = () => {
       </nav>
       <CartDrawer
         isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
         toggleCartDrawer={toggleCartDrawer}
       />
     </>

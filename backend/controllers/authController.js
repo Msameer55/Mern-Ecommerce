@@ -59,7 +59,7 @@ export const login = async (req, res) => {
         }
         const comparePass = await bcryptjs.compare(password, checkUser.password);
         if (!comparePass) {
-            return res.status(404).json({ success: false, message: "Password must be valid" })
+            return res.status(400).json({ success: false, message: "Password must be valid" })
         }
 
         const token = createToken(checkUser);

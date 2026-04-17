@@ -4,9 +4,9 @@ import { createCheckout, finalizeCheckout, updateCheckout } from "../controllers
 
 const checkoutRoutes = express.Router();
 
-checkoutRoutes.post("/", verifyToken, createCheckout );
-checkoutRoutes.post("/:id/pay", verifyToken, updateCheckout );
-checkoutRoutes.post("/:id/finalize", verifyToken, finalizeCheckout );
+checkoutRoutes.post("/", verifyToken, createCheckout);
+checkoutRoutes.post("/:id/pay", verifyToken, updateCheckout);
+checkoutRoutes.post("/:id/finalize", verifyToken, finalizeCheckout);
 
 
 export default checkoutRoutes;

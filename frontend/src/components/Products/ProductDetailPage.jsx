@@ -14,7 +14,7 @@ const ProductDetailPage = () => {
   const [qty, setQty] = useState(1);
   const [buttonDisabled, setIsButtonDisabled] = useState(false);
 
-  const handleQtyChnage = (action) => {
+  const handleQtyChange = (action) => {
     if (action === "plus") {
       setQty((prev) => prev + 1);
     }
@@ -145,7 +145,7 @@ const ProductDetailPage = () => {
     <div className="featured-product-section p-6 my-6">
       <div className="container mx-auto max-w-6xl">
         <div className="flex justify-center items-start gap-10 flex-col md:flex-row">
-          {/* 🖼️ Images */}
+     
           <div className="flex gap-4 space-y-4">
             <div className="order-2">
               <img
@@ -169,7 +169,6 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          {/* 🛍️ Product Info */}
           <div className="space-y-4">
             <h2 className="text-3xl font-bold">{productData.name}</h2>
             <div className="flex items-center gap-4">
@@ -263,7 +262,6 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* 🔁 Similar Products */}
       <div className="you-may-like-section mt-10">
         <h2 className="text-3xl my-6 font-bold">You May Also Like</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

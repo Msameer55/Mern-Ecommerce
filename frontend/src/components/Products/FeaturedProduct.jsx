@@ -199,7 +199,6 @@ const FeaturedProduct = () => {
                     } `}
                     style={{
                       backgroundColor: color.toLocaleLowerCase(),
-                      filter: "brightness(0.5)",
                     }}
                     onClick={() => setSelectedColor(color)}
                   ></div>

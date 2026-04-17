@@ -81,7 +81,7 @@ const Checkout = () => {
               value={form.country}
               onChange={onChange}
               className={inputCls}
-            >
+             >
               <option>The Netherlands</option>
               <option>Germany</option>
               <option>France</option>

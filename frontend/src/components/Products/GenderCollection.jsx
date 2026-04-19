@@ -1,127 +1,98 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import ProductApi from "../../api/productApi";
 
 const GenderCollection = ({ category }) => {
-  const genderCollection = [
-    {
-      id: 1,
-      category: "mens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/mens-collection/mens-1.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 2,
-      category: "mens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/mens-collection/mens-2.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 3,
-      category: "mens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/mens-collection/mens-3.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 4,
-      category: "mens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/mens-collection/mens-4.webp",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    {
-      id: 5,
-      category: "womens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/womens-collection/womens-1.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 6,
-      category: "womens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/womens-collection/womens-2.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 7,
-      category: "womens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/womens-collection/womens-3.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-    {
-      id: 8,
-      category: "womens",
-      link: "/mens-topwear",
-      images: [
-        {
-          url: "/assets/images/homepage/womens-collection/womens-4.avif",
-          altText: "Classic Oxford Button-Down Shirt Front View",
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        // Map category slug to database values if needed
+        const gender =
+          category === "Mens"
+            ? "men"
+            : category === "Womens"
+              ? "women"
+              : category;
+        const response = await ProductApi.fetchProductsByQuery(
+          `gender=${gender}&limit=4`
+        );
+        // console.log("GenderCollection products:", response.data.products);
+        setProducts(response.data.products || []);
+      } catch (error) {
+        console.error("Error fetching gender collection:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [category]);
 
   return (
     <>
       <div className="gender-collection-section my-15 mb-20">
         <div className="w-full">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {genderCollection
-              .filter((item) => item.category === category)
-              .map((item, index) => {
-                return (
-                  <div className="collection  mx-auto mb-5" key={index}>
-                    <div className="image">
+            {loading ? (
+              // Loading skeletons
+              Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full h-[400px] bg-gray-200 animate-pulse rounded-lg"
+                />
+              ))
+            ) : products.length > 0 ? (
+              products.map((item) => (
+                <div className="collection mx-auto mb-5 w-full" key={item._id}>
+                  <NavLink to={`/collections/${category.toLowerCase()}`}>
+                    {/* overflow-hidden is required for object-cover + scale hover to clip correctly */}
+                    <div className="image relative group cursor-pointer overflow-hidden rounded-lg">
                       <img
-                        className="w-full h-auto object-cover"
-                        src={item.images[0].url}
-                        alt={item.images[0].alt}
+                        className="w-full h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
+                        src={
+                          item.images && item.images.length > 0
+                            ? item.images[0].url
+                            : `https://placehold.co/500x400/e2e8f0/94a3b8?text=${encodeURIComponent(item.name)}`
+                        }
+                        alt={
+                          (item.images && item.images[0]?.altText) || item.name
+                        }
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://placehold.co/500x400/e2e8f0/94a3b8?text=${encodeURIComponent(item.name)}`;
+                        }}
                       />
+                      {/* Product label */}
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <h4 className="text-xl font-bold drop-shadow">
+                          {item.name}
+                        </h4>
+                        <p className="text-sm font-medium drop-shadow">
+                          Shop Now
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  </NavLink>
+                </div>
+              ))
+            ) : (
+              <p className="col-span-4 text-center text-gray-500">
+                No products found.
+              </p>
+            )}
           </div>
-          {genderCollection.filter((item) => item.category === category) && (
-            <div className="buttons-section my-20 flex justify-center w-full text-center">
-              <button className="border max-w-[200px] h-[60px] uppercase font-bold px-3 hover:bg-black hover:text-white transition-colors duration-300">
-                <NavLink className="w-full h-full flex items-center ">Shop {category}'s Brands</NavLink>
-              </button>
-            </div>
-          )}
+          <div className="buttons-section my-10 flex justify-center w-full text-center">
+            <NavLink
+              to={`/collections/${category.toLowerCase()}`}
+              className="border border-black max-w-[200px] h-[60px] uppercase font-bold px-2 flex items-center hover:bg-black hover:text-white transition-colors duration-300"
+            >
+              Shop {category}&apos;s Collection
+            </NavLink>
+          </div>
         </div>
       </div>
     </>

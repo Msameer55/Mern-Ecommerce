@@ -10,8 +10,8 @@ const Home = () => {
       <HeroSection />
       <FeaturedImages />
       <h2 className="text-7xl font-medium tracking-tighter text-center my-10">The biggest labels</h2>
-      <GenderCollection category="womens"/>
-      <GenderCollection category="mens"/>
+      <GenderCollection category="Women" />
+      <GenderCollection category="Men" />
       <NewArrivals />
       <FeaturedProduct />
     </>

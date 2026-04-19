@@ -32,7 +32,7 @@ const Navbar = () => {
             fixed top-0 left-0 w-full h-full bg-white shadow-2xl
             transition-transform duration-300  z-9999 p-5
             md:relative md:shadow-none md:w-auto md:p-0 md:h-auto
-            ${isMenuOpen ? '-translate-x-0 md:translate-none' : '-translate-x-full md:translate-none' }
+            ${isMenuOpen ? '-translate-x-0 md:translate-none' : '-translate-x-full md:translate-none'}
           `}
             >
               {isMenuOpen && (
@@ -41,25 +41,25 @@ const Navbar = () => {
 
               <div className="nav-links flex flex-col items-left space-x-6 md:justify-between md:items-center  md:flex-row mt-5 md:mt-0">
                 <NavLink
-                  to="/collections/all"
+                  to="/collections/men"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   Mens
                 </NavLink>
                 <NavLink
-                  to="/women"
+                  to="/collections/women"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   Womens
                 </NavLink>
                 <NavLink
-                  to="/top-wear"
+                  to="/collections/top-wear"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   TopWear
                 </NavLink>
                 <NavLink
-                  to="/bottom-wear"
+                  to="/collections/bottom-wear"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   BottomWear

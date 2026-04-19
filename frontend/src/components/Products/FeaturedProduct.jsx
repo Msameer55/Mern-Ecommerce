@@ -71,7 +71,7 @@ const FeaturedProduct = () => {
   };
 
 
-   const similarProducts = [
+  const similarProducts = [
     {
       id: 1,
       gender: "mens",
@@ -140,7 +140,7 @@ const FeaturedProduct = () => {
         },
       ],
     },
-    
+
   ];
 
 
@@ -166,10 +166,9 @@ const FeaturedProduct = () => {
                   src={img.url}
                   alt={img.altText}
                   className={`w-20 h-20 rounded-md object-cover cursor-pointer
-                    ${
-                      selectedImage.url === img.url
-                        ? "border-2"
-                        : " border-none"
+                    ${selectedImage.url === img.url
+                      ? "border-2"
+                      : " border-none"
                     }
                     `}
                 />
@@ -194,9 +193,8 @@ const FeaturedProduct = () => {
                 {product.colors.map((color, index) => (
                   <div
                     key={index}
-                    className={`cursor-pointer w-8 h-8 rounded-full ${
-                      selectedColor === color ? "border-4" : "border"
-                    } `}
+                    className={`cursor-pointer w-8 h-8 rounded-full ${selectedColor === color ? "border-4" : "border"
+                      } `}
                     style={{
                       backgroundColor: color.toLocaleLowerCase(),
                     }}
@@ -211,11 +209,10 @@ const FeaturedProduct = () => {
                 {product.sizes.map((size, index) => (
                   <span
                     key={index}
-                    className={`cursor-pointer px-4 py-2 border  text-sm ${
-                      selectedSize === size
+                    className={`cursor-pointer px-4 py-2 border  text-sm ${selectedSize === size
                         ? "bg-black text-white"
                         : "bg-transparent text-black"
-                    }`}
+                      }`}
                     onClick={() => setSelectedSize(size)}
                   >
                     {size}

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import ProductApi from "../../api/productApi";
 
 export const filterProductsByQuery = createAsyncThunk("/product/fetchByQuery", async ({
     collections,
@@ -37,31 +37,117 @@ export const filterProductsByQuery = createAsyncThunk("/product/fetchByQuery", a
     }
 })
 
+// Fetch Single Product with its Id
+export const getSingleProduct = createAsyncThunk("/product/fetchSingleProduct", async (productId, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.getSingleProduct(productId);
+        console.log(response.data, "response from single product slice");
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
+
+// Fetch Similar Product By Id 
+export const getSimilarProduct = createAsyncThunk("/product/similarProduct", async (productId, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.getSimilarProduct(productId);
+        console.log(response.data, " response from similar product slice")
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
 
 const initialState = {
-    products: [],
+    allProducts: [],
+    singleProduct: null,
+    similarProduct: null,
     error: false,
-    loading: false
+    loading: false,
+    filters: {
+        collections: "",
+        size: "",
+        color: "",
+        gender: "",
+        minPrice: "",
+        maxPrice: "",
+        search: "",
+        category: "",
+        material: "",
+        brand: "",
+        limit: "",
+        sortBy: ""
+    }
 }
 
 const productSlice = createSlice({
     name: "product",
     initialState,
+    reducers: {
+        setFilters: (state, action) => {
+            state.filters = { ...state.filters, ...action.payload }
+        },
+        clearFilters: (state) => {
+            state.filters = {
+                collections: "",
+                size: "",
+                color: "",
+                gender: "",
+                minPrice: "",
+                maxPrice: "",
+                search: "",
+                category: "",
+                material: "",
+                brand: "",
+                limit: "",
+                sortBy: ""
+            }
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(filterProductsByQuery.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
             .addCase(filterProductsByQuery.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = action.payload;
+                state.allProducts = action.payload.products || [];
                 state.error = null;
             })
             .addCase(filterProductsByQuery.rejected, (state, action) => {
-                state.loading = false,
-                    state.error = action.payload;
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getSingleProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getSingleProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.singleProduct = action.payload.product;
+                state.error = null;
+            })
+            .addCase(getSingleProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(getSimilarProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null
+            })
+            .addCase(getSimilarProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.similarProduct = action.payload;
+                state.error = null;
+            })
+            .addCase(getSimilarProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             })
     }
 })
 
+export const { setFilters, clearFilters } = productSlice.actions;
 export default productSlice.reducer;

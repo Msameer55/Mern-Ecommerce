@@ -14,7 +14,7 @@ export const seedData = async () => {
         // delete existing data 
         await Product.deleteMany();
         console.log("products has been deleting");
-        // await User.deleteMany();
+        await User.deleteMany();
         console.log("User has been deleting");
         await Cart.deleteMany();
         console.log("Cart has been deleting");

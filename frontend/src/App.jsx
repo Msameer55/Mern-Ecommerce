@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -19,12 +19,15 @@ import AdminProducts from "./components/pages/Admin/AdminProduct";
 import AddProduct from "./components/pages/Admin/AddProduct";
 import EditProduct from "./components/pages/Admin/EditProduct";
 import AdminOrders from "./components/pages/Admin/AdminOrders";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
+
   return (
     <>
       <BrowserRouter>
         <ToastContainer position="top-right" autoClose={3000} />
+        <ScrollToTop />
         <Routes>
           {/* User Layout */}
           <Route path="/" element={<UserLayout />}>

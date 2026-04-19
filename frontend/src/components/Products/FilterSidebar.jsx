@@ -5,7 +5,7 @@ const FilterSidebar = () => {
   const navigate = useNavigate();
 
   const resetFilters = () => {
-    console.log("testt")
+
     const resetValues = {
       category: "",
       gender: "",

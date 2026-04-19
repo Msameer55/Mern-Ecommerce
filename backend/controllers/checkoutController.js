@@ -1,5 +1,6 @@
 import Cart from "../models/Cart.js";
 import { Checkout } from "../models/Checkout.js";
+import { Order } from "../models/Order.js";
 
 
 // @route POST /api/checkout
@@ -83,9 +84,9 @@ export const finalizeCheckout = async (req, res) => {
             // create the final order based on the checkout details
             const finalOrder = await Order.create({
                 user: checkout.user,
-                orderItems: checkout.orderItems,
+                orderItems: checkout.checkoutItems,
                 shippingAddress: checkout.shippingAddress,
-                paymentMethod: checkout.paymentDetails,
+                paymentMethod: checkout.paymentMethod,
                 totalPrice: checkout.totalPrice,
                 isPaid: true,
                 paidAt: checkout.paidAt,

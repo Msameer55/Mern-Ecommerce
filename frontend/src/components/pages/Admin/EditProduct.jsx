@@ -21,10 +21,10 @@ const EditProduct = () => {
 
   useEffect(() => {
     if (state) {
-      setForm({
-        ...form,
+      setForm((prev) => ({
+        ...prev,
         ...state,
-      });
+      }));
     }
   }, [state]);
 

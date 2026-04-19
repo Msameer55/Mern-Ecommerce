@@ -127,7 +127,7 @@ const AdminUser = () => {
               <tr
                 key={user.id}
                 className={`${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
-              >
+               >
                 <td className="py-3 px-4">{user.name}</td>
                 <td className="py-3 px-4">{user.email}</td>
                 <td className="py-3 px-4">

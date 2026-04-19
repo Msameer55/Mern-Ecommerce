@@ -15,7 +15,7 @@ export const verifyToken = async (req, res, next) => {
         if (!user) return res.status(401).json({ success: false, message: "User not found" });
 
         req.user = user;
-        next(); 
+        next();
     } catch (error) {
         console.error("JWT verification failed:", error.message);
         return res.status(401).json({ success: false, error: 'Invalid token' });

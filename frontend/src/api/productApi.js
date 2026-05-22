@@ -1,7 +1,12 @@
 import axiosInstance from "../config/axios";
 
 const ProductApi = {
-    fetchProductsByQuery: (query) => axiosInstance.get(`/api/products/${query}`);
+    fetchProductsByQuery: (query) => axiosInstance.get(`/api/products/?${query}`),
+    fetchProductById: (id) => axiosInstance.get(`/api/products/${id}`),
+    fetchSimilarProduct: (id) => axiosInstance.get(`/api/products/similar/${id}`),
+    fetchBestSellersProduct: () => axiosInstance.get("/api/products/bestseller"),
+    fectchNewArrivalProduct: () => axiosInstance.get("/api/products/new-arrivals")
+
 }
 
 export default ProductApi;

@@ -4,155 +4,36 @@ import FilterSidebar from "./FilterSidebar";
 import SortOptions from "./SortOptions";
 import Product from "./Product";
 import ProductList from "./ProductListSwiper";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { filterProductsByQuery } from "../../redux/slice/productSlice";
+import { toast } from "react-toastify";
 
 const CollectionPage = () => {
+  const { collection } = useParams();
+  const { allProducts: products, loading, error } = useSelector((state) => state.product);
+  const [searchParams] = useSearchParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [products, setProducts] = useState([]);
   const sidebarRef = useRef();
+  const queryParams = Object.fromEntries(searchParams);
+
+  let filterNames = "All";
+  if (collection === "all") {
+    if (queryParams.gender) {
+      filterNames = queryParams.gender;
+    } else if (queryParams.category) {
+      filterNames = queryParams.category;
+    }
+  } else if (collection) {
+    filterNames = collection.replace("-", " ").split(" ").map((item) => item.charAt(0).toUpperCase() + item.slice(1)).join(" ");
+  }
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    setTimeout(() => {
-      const fetchedProducts = [
-        {
-          id: 1,
-          gender: "mens",
-          name: "Black Shoes",
-          sizes: ["S", "M", "L", "XL"],
-          colors: ["Blue", "Black", "Gray"],
-          price: 180.99,
-          comparePrice: 279.99,
-          category: "Footwear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=111",
-              altText: "Footwear",
-            },
-          ],
-        },
-        {
-          id: 2,
-          gender: "womens",
-          name: "Silk Floral Dress",
-          sizes: ["XS", "S", "M"],
-          colors: ["Pink", "White", "yellow"],
-          price: 79.99,
-          comparePrice: 99.99,
-          category: "Dresses",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=112",
-              altText: "Silk Floral Dress",
-            },
-          ],
-        },
-        {
-          id: 3,
-          gender: "mens",
-          name: "Graphic T-Shirt",
-          sizes: ["M", "L", "XL"],
-          colors: ["Black", "White", "Red"],
-          price: 29.99,
-          comparePrice: 39.99,
-          category: "Top Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=113",
-              altText: "Graphic T-Shirt",
-            },
-          ],
-        },
-        {
-          id: 4,
-          gender: "womens",
-          name: "High Waist Leggings",
-          sizes: ["S", "M", "L"],
-          colors: ["Gray", "Black", "Purple"],
-          price: 35.99,
-          comparePrice: 49.99,
-          category: "Bottom Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=114",
-              altText: "Leggings",
-            },
-          ],
-        },
-        {
-          id: 5,
-          gender: "womens",
-          name: "High Waist Leggings",
-          sizes: ["S", "M", "L"],
-          colors: ["Gray", "Black", "Purple"],
-          price: 35.99,
-          comparePrice: 49.99,
-          category: "Bottom Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=11",
-              altText: "Leggings",
-            },
-          ],
-        },
-        {
-          id: 6,
-          gender: "womens",
-          name: "High Waist Leggings",
-          sizes: ["S", "M", "L"],
-          colors: ["Gray", "Black", "Purple"],
-          price: 35.99,
-          comparePrice: 49.99,
-          category: "Bottom Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=164",
-              altText: "Leggings",
-            },
-          ],
-        },
-        {
-          id: 7,
-          gender: "womens",
-          name: "High Waist Leggings",
-          sizes: ["S", "M", "L"],
-          colors: ["Gray", "Black", "Purple"],
-          price: 35.99,
-          comparePrice: 49.99,
-          category: "Bottom Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=274",
-              altText: "Leggings",
-            },
-          ],
-        },
-        {
-          id: 8,
-          gender: "womens",
-          name: "High Waist Leggings",
-          sizes: ["S", "M", "L"],
-          colors: ["Gray", "Black", "Purple"],
-          price: 35.99,
-          comparePrice: 49.99,
-          category: "Bottom Wear",
-          quantity: 1,
-          images: [
-            {
-              url: "https://picsum.photos/500/500?random=24",
-              altText: "Leggings",
-            },
-          ],
-        },
-      ];
-      setProducts(fetchedProducts);
-    }, 1000);
-  }, []);
+    dispatch(filterProductsByQuery({ collections: collection, ...queryParams }));
+    // console.log(queryParams, "queryparams ", collection)
+  }, [collection, dispatch, searchParams.toString()])
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -174,13 +55,18 @@ const CollectionPage = () => {
   }, []);
 
   return (
-    <div className="collection-page p-6 my-6">
-      <div className="container max-w-7xl m-auto">
-        <div className="flex gap-10">
-          {/* mobile filter button  */}
-          <button onClick={toggleSidebar} className="block lg:hidden">
-            <FaFilter />
-          </button>
+    <div className="collection-page p-4 md:p-6 my-6">
+      <div className="container max-w-9xl m-auto">
+        <div className="flex gap-10 flex-col md:flex-row">
+          <div className="flex justify-between items-center md:hidden w-full">
+            {/* mobile filter button  */}
+            <button onClick={toggleSidebar} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+              <FaFilter /> <span>Filter</span>
+            </button>
+            <div className="sort-option">
+              <SortOptions />
+            </div>
+          </div>
 
           <div
             ref={sidebarRef}
@@ -191,21 +77,28 @@ const CollectionPage = () => {
             <FilterSidebar />
           </div>
 
-          <div className="collection-container w-[70%]">
+          <div className="collection-container md:w-[70%]">
             <div className="flex justify-between items-center w-full">
               <div className="heading mb-10">
                 <h4 className="text-4xl font-semibold tracking-tighter">
-                  All Collection
+                  {filterNames} Collection
                 </h4>
               </div>
-              <div className="sort-option">
+              <div className="sort-option lg:block hidden">
                 <SortOptions />
               </div>
             </div>
-            <div className="product-grid-main grid grid-cols-4 gap-3 space-y-3.5">
-              {products.map((item, index) => {
-                return <Product key={item.id} product={item} />;
-              })}
+            <div className="product-grid-main grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {products?.length > 0 ? (
+                products.map((item) => (
+                  <Product key={item._id} product={item} loading={loading} />
+                ))
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-16 text-gray-500">
+                  <p className="text-xl font-medium">No products found</p>
+                  <p className="mt-2 text-sm">Try adjusting your filters or search terms.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

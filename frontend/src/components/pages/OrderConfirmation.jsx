@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockOrders } from "../fakeData/ProductData";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrders } from "../../redux/slice/orderSlice";
 
 const OrderConfirmation = () => {
-  const [order, setOrder] = useState(null);
+  const { orders, loading, error } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // for now, using the latest mock order
-    const latestOrder = mockOrders[mockOrders.length - 1];
-    setOrder(latestOrder);
-  }, []);
+    dispatch(fetchOrders());
+  }, [dispatch]);
 
-  if (!order)
-    return <p className="text-center mt-10 text-gray-500">Loading...</p>;
+  if (loading) {
+    return <p className="text-center mt-10 text-gray-500">Loading order details...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-10 text-red-500">Error loading orders: {error}</p>;
+  }
+
+  if (!orders || orders.length === 0) {
+    return <p className="text-center mt-10 text-gray-500">No recent orders found.</p>;
+  }
+
+  // Get the most recent order (the backend sorts by createdAt: -1)
+  const order = orders[0];
 
   return (
     <div className="order-confirmation container mx-auto max-w-5xl py-10">
@@ -28,15 +40,18 @@ const OrderConfirmation = () => {
         <h3 className="text-2xl font-semibold mb-4">Order Details</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 mb-6">
-          <p><span className="font-bold">Order ID:</span> #{order.id}</p>
-          <p><span className="font-bold">Order Date:</span> {order.createdAt.toLocaleDateString()}</p>
+          <p><span className="font-bold">Order ID:</span> #{order._id}</p>
+          <p><span className="font-bold">Payment Method:</span> {order.paymentMethod}</p>
           <p>
             <span className="font-bold">Shipping Address:</span>{" "}
             {order.shippingAddress
-              ? `${order.shippingAddress.city}, ${order.shippingAddress.country}`
+              ? `${order.shippingAddress.address}, ${order.shippingAddress.city}, ${order.shippingAddress.country} - ${order.shippingAddress.postalCode}`
               : "N/A"}
           </p>
-          <p><span className="font-bold">Payment Method:</span> Cash on Delivery</p>
+          <p>
+            <span className="font-bold">Date:</span>{" "}
+            {new Date(order.createdAt).toLocaleDateString()}
+          </p>
         </div>
 
         <h4 className="text-xl font-semibold mb-3">Ordered Items</h4>
@@ -51,7 +66,7 @@ const OrderConfirmation = () => {
               </tr>
             </thead>
             <tbody>
-              {order.orderItems.map((item, index) => (
+              {order.orderItems && order.orderItems.map((item, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <img
@@ -60,9 +75,14 @@ const OrderConfirmation = () => {
                       className="w-12 h-12 rounded object-cover border"
                     />
                   </td>
-                  <td className="py-3 px-4">{item.name}</td>
-                  <td className="py-3 px-4">1</td>
-                  <td className="py-3 px-4">Rs {order.totalPrice}</td>
+                  <td className="py-3 px-4">
+                    {item.name}
+                    <div className="text-xs text-gray-500">
+                      {item.color} · {item.size}
+                    </div>
+                  </td>
+                  <td className="py-3 px-4">{item.quantity}</td>
+                  <td className="py-3 px-4">Rs {item.price}</td>
                 </tr>
               ))}
             </tbody>
@@ -72,20 +92,19 @@ const OrderConfirmation = () => {
         <div className="flex justify-between mt-6 text-lg font-semibold">
           <p>Status:{" "}
             <span
-              className={`px-3 py-1 rounded-full text-sm font-bold ${
-                order.isPaid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-              }`}
+              className={`px-3 py-1 rounded-full text-sm font-bold ${order.isPaid ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                }`}
             >
               {order.isPaid ? "Paid" : "Pending"}
             </span>
           </p>
-          <p>Total: Rs {order.totalPrice}</p>
+          <p>Total: Rs {order.totalPrice.toFixed(2)}</p>
         </div>
 
         <div className="text-center mt-8">
           <button
             onClick={() => navigate("/")}
-            className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
+            className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition cursor-pointer"
           >
             Continue Shopping
           </button>

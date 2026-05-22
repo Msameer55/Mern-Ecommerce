@@ -1,24 +1,42 @@
 import React, { useState } from "react";
 import { IoIosSearch, IoMdClose } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import {
+  filterProductsByQuery,
+  setFilters,
+} from "../../redux/slice/productSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Searchbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleToggleSearchBar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log("Search term: ",  searchTerm);
-    setIsOpen(false);
+  const handleSearchSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      const data = await dispatch(
+        filterProductsByQuery({ search: searchTerm, collections: "all" }),
+      ).unwrap();
+      toast.success(data.message);
+      navigate(`/collections/all?search=${searchTerm}`);
+      setIsOpen(false);
+      setSearchTerm("");
+    } catch (error) {
+      toast.error(error || error?.message);
+    }
   };
 
   return (
     <>
       <div
-        className={`flex justify-center items-center w-full transition-all duration-300 
+        className={` w-full transition-all duration-300 flex 
         ${isOpen ? "absolute top-0 left-0 w-full bg-white h-24 z-9999 " : "w-auto"}
         `}
       >
@@ -26,12 +44,12 @@ const Searchbar = () => {
           <>
             <form
               onSubmit={handleSearchSubmit}
-              className="flex justify-center items-center w-full relative"
+              className="flex justify-center items-center w-full relative h-full"
             >
-              <div className="relative w-1/2">
+              <div className="relative sm:w-full md:w-1/2">
                 <input
                   type="text"
-                  className="border-lg bg-gray-100 px-4 py-2 pl-2 pr-12 rounded-lg focus:outline-none w-full placeholder:text-gray-700"
+                  className="border-lg bg-gray-100 px-4 py-3 pl-4 pr-12 rounded-[40px] focus:outline-none w-full placeholder:text-gray-700"
                   placeholder="Search ...."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -41,10 +59,12 @@ const Searchbar = () => {
                 </button>
               </div>
               <div
-                className="bg-[#dddddd] cursor-pointer close-icon absolute top-0 right-10 bottom-auto flex justify-center items-center rounded-full w-[40px] h-[40px]"
+                className=" cursor-pointer close-icon absolute top-0 right-10 bottom-0 h-full  flex justify-center items-center"
                 onClick={handleToggleSearchBar}
               >
-                <IoMdClose className="w-6 h-6 text-gray-400" />
+                <div className="bg-[#dddddd] w-[30px] h-[30px] md:w-[40px] md:h-[40px]  rounded-full flex justify-center items-center">
+                  <IoMdClose className="w-4 h-4 md:w-6 md:h-6 text-gray-400" />
+                </div>
               </div>
             </form>
           </>

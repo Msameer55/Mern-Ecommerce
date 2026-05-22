@@ -26,3 +26,19 @@ export const subscribe = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message || "Server Error" })
     }
 }
+
+// @route GET /api/subscribe
+// @desc Get all subscribers 
+// @access Private
+
+export const getAllSubscribers = async (req, res) => {
+    try {
+        const subscribers = await Subscriber.find({}).sort({ createdAt: -1 }).select("_id email createdAt");
+        if (!subscribers) {
+            return res.status(404).json({ success: false, message: "No subscribers found" })
+        }
+        return res.status(200).json({ success: true, subscribers })
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message || "Server Error" })
+    }
+}

@@ -41,7 +41,7 @@ export const addUser = async (req, res) => {
         })
 
         await newUser.save();
-        return res.status(201).json({ success: true, message: "User added successfully", newUser })
+        return res.status(201).json({ success: true, message: "User added successfully", user: newUser })
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message || "Server Error" })
     }
@@ -54,21 +54,34 @@ export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, email, password, role } = req.body;
-        if (!name || !email || !password) {
-            return res.status(400).json({ success: false, message: "Please fill all the required fields" })
-        }
+
         const user = await User.findById(id);
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
         }
-        user.name = name;
-        user.email = email;
-        user.password = password;
-        user.role = role;
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (role) user.role = role;
+
+        if (password) {
+            const hashedPass = await bcryptjs.hash(password, 10);
+            user.password = hashedPass;
+        }
+
         await user.save();
-        return res.status(200).json({ success: true, message: "User updated successfully", user })
+
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            user
+        });
+
     } catch (error) {
-        return res.status(500).json({ success: false, message: error.message || "Server Error" })
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Server Error"
+        })
     }
 }
 
@@ -85,7 +98,7 @@ export const deleteUser = async (req, res) => {
             return res.status(400).json({ success: false, message: "User not found" })
         }
         await user.deleteOne();
-        return res.status(200).json({ success: true, message: "User deleted successfully" })
+        return res.status(200).json({ success: true, message: "User deleted successfully", userId: id })
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message || "Server Error" })
     }

@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllAdminOrders } from "../../../redux/slice/adminOrderSlice";
+import { fetchAllAdminProducts } from "../../../redux/slice/adminProductSlice";
 
 const AdminHome = () => {
-  const recentOrders = [
-    { id: "123123", user: "John Doe", total: 110, status: "Processing" },
-    { id: "123124", user: "Jane Smith", total: 220, status: "Processing" },
-    { id: "123125", user: "Ali Khan", total: 180, status: "Processing" },
-    { id: "123126", user: "Emma Brown", total: 130, status: "Processing" },
-    { id: "123127", user: "Noah Lee", total: 95, status: "Processing" },
-  ];
+  const { totalOrders, totalSales, orders } = useSelector((state) => state.adminOrder);
+  const { allAdminProduct } = useSelector((state) => state.adminProduct);
+  const recentOrders = orders && orders.length > 0 ? [...orders]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5) : [];
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllAdminProducts())
+    dispatch(getAllAdminOrders());
+  }, [dispatch])
 
   return (
     <div className="p-6">
@@ -18,16 +26,16 @@ const AdminHome = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-lg  p-6">
           <h3 className="text-gray-500 text-sm font-medium mb-2">Revenue</h3>
-          <p className="text-2xl font-semibold">$10000</p>
+          <p className="text-2xl font-semibold">{totalSales}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg  p-6">
           <h3 className="text-gray-500 text-sm font-medium mb-2">
             Total Orders
           </h3>
-          <p className="text-2xl font-semibold">200</p>
+          <p className="text-2xl font-semibold">{totalOrders}</p>
           <a
-            href="#"
+            href="/admin/orders"
             className="text-blue-600 text-sm font-medium hover:underline mt-2 inline-block"
           >
             Manage Orders
@@ -38,9 +46,9 @@ const AdminHome = () => {
           <h3 className="text-gray-500 text-sm font-medium mb-2">
             Total Products
           </h3>
-          <p className="text-2xl font-semibold">100</p>
+          <p className="text-2xl font-semibold">{allAdminProduct.length}</p>
           <a
-            href="#"
+            href="/admin/products"
             className="text-blue-600 text-sm font-medium hover:underline mt-2 inline-block"
           >
             Manage Products
@@ -66,14 +74,13 @@ const AdminHome = () => {
               {recentOrders.map((order, index) => (
                 <tr
                   key={index}
-                  className={`${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                  } hover:bg-gray-100 transition`}
+                  className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                    } hover:bg-gray-100 transition`}
                 >
-                  <td className="py-3 px-4">{order.id}</td>
-                  <td className="py-3 px-4">{order.user}</td>
-                  <td className="py-3 px-4">${order.total}</td>
-                  <td className="py-3 px-4 text-gray-600">{order.status}</td>
+                  <td className="py-3 px-4">{order._id}</td>
+                  <td className="py-3 px-4">{order.user?.name || "Guest"}</td>
+                  <td className="py-3 px-4">Rs {order.totalPrice.toFixed(2)}</td>
+                  <td className="py-3 px-4">{order.status}</td>
                 </tr>
               ))}
             </tbody>

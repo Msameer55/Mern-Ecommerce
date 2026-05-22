@@ -15,6 +15,7 @@ const clearActiveToken = () => {
         return;
     }
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
 };
 
 export const isTokenValid = (token) => {
@@ -105,10 +106,9 @@ export const verifyTokenIntegrity = () => {
     }
 
     if (!tokenData.valid) {
-        localStorage.setItem('message', 'your session has expired, please login again');
-        if (!window.location.pathname.includes('/login')) {
-            window.location.href = '/login';
-        }
+        // We no longer redirect here to avoid blank pages/interruptions.
+        // The axios interceptor will handle the 401 from the server or 
+        // the missing token and then redirect smoothly.
         return false;
     }
 

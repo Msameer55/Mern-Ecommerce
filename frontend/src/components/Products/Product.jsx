@@ -1,31 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
+import ReactSpinner from "../ReactSpinner";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../redux/slice/cartSlice";
 
 const Product = ({ product }) => {
-  const saveRs = Math.floor(product.comparePrice - product.price);
-
-  const [selectedColor, setSelectedColor] = useState("");
+  // Use discountedPrice if available as the actual selling price, else regular price.
+  const sellingPrice = product.discountedPrice || product.price;
+  const isDiscounted = product.discountedPrice && product.discountedPrice < product.price;
+  const saveRs = isDiscounted ? Math.floor(product.price - product.discountedPrice) : 0;
+  const [loading, setLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
-
-  const handleAddToCart = () => {
-    if (!selectedColor || !selectedSize) {
-      toast.error("Please select size and color");
-    } else {
-      toast.success("Product has been added to your cart");
+  const [selectedColor, setSelectedColor] = useState("");
+  const { guestId, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const handleAddToCart = async () => {
+    setLoading(true);
+    try {
+      if (!selectedColor || !selectedSize) {
+        toast.error("Please select size and color");
+      } else {
+        await dispatch(addToCart({ productId: product._id, color: selectedColor, size: selectedSize, quantity: 1, guestId, userId: user?._id || null }));
+        toast.success("Product has been added to your cart");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className=" bg-white">
-      <NavLink to={`/product/${product.id}`}>
-        <img
-          src={product.images[0].url}
-          alt={product.images[0].altText}
-          className="w-full h-auto object-cover rounded mb-4"
-        />
-      </NavLink>
-      <NavLink to={`/product/${product.id}`}>
+    <div className="bg-white">
+      <div className="min-h-[380px] h-[400px] overflow-hidden mb-4">
+        <NavLink to={`/product/${product._id}`}>
+          <img
+            src={product.images?.[0]?.url || "https://picsum.photos/500/500"}
+            alt={product.images?.[0]?.altText || product.name}
+            className="w-full h-full object-cover rounded"
+          />
+        </NavLink>
+      </div>
+
+      <NavLink to={`/product/${product._id}`}>
         <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
       </NavLink>
 
@@ -34,7 +52,7 @@ const Product = ({ product }) => {
           {product.colors.map((color, index) => (
             <span
               key={index}
-              className={`cursor-pointer w-7 h-7 rounded-full border ${selectedColor === color ? "border-2" : "border"}`}
+              className={`cursor-pointer w-7 h-7 rounded-full ${selectedColor === color ? "border-3 border-black" : "border border-gray-300"}`}
               onClick={() => setSelectedColor(color)}
               style={{ backgroundColor: color }}
             />
@@ -60,14 +78,14 @@ const Product = ({ product }) => {
 
       <div className="mb-3">
         <span className="text-md font-bold text-black">
-          PKR {product.price}
+          PKR {sellingPrice}
         </span>
-        {product.comparePrice && product.comparePrice > product.price && (
+        {isDiscounted && (
           <span className="ml-2 text-sm line-through text-gray-500">
-            PKR {product.comparePrice}
+            PKR {product.price}
           </span>
         )}
-        {product.comparePrice && (
+        {isDiscounted && (
           <span className="ml-2 text-gray-600 text-[13px]">
             Save Rs {saveRs}
           </span>
@@ -76,9 +94,10 @@ const Product = ({ product }) => {
 
       <button
         onClick={handleAddToCart}
-        className="cursor-pointer bg-black text-white w-full py-2  hover:bg-gray-800 transition"
+        disabled={loading}
+        className={`  cursor-pointer bg-black text-white w-full py-2  hover:bg-gray-800 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        Add to Cart
+        {loading ? <ReactSpinner /> : "Add to Cart"}
       </button>
     </div>
   );

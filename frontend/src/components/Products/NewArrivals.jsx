@@ -5,18 +5,23 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ProductList from "./ProductListSwiper";
-import { fakeData } from "../fakeData/ProductData";
+import { useDispatch, useSelector } from "react-redux";
+import { newArrivalProduct } from "../../redux/slice/productSlice";
 
 const NewArrivals = () => {
-  const newArrival = fakeData.slice(0, 5);
+
+  const { newArrival, loading, error } = useSelector((state) => state.product);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(newArrivalProduct());
+  }, [dispatch])
 
   return (
-    <section className=" px-4 relative">
-      <ProductList
-        title="New Arrivals"
-        products={newArrival}
-        isSwiper={true} // Toggle this to false for grid layout
-      />
+    <section className="px-4 relative mb-16">
+      <ProductList products={newArrival} isSwiper={true} title={"New Arrivals"} />
+
     </section>
   );
 };

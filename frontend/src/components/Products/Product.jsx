@@ -48,7 +48,7 @@ const Product = ({ product }) => {
       </NavLink>
 
       {product.colors && (
-        <div className="flex justify-start gap-2 mb-2">
+        <div className="flex justify-start gap-2 my-2">
           {product.colors.map((color, index) => (
             <span
               key={index}

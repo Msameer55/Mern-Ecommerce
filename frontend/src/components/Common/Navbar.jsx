@@ -15,9 +15,9 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [popupOpen, setPopupOpen] = useState(false);
   const { cartItems } = useSelector((state) => state.cart);
-  const { user, guestId  } = useSelector((state) => state.auth);
+  const { user, guestId } = useSelector((state) => state.auth);
   const { wishlist, error, loading } = useSelector((state) => state.wishlist);
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getWishListItemsSlice({ guestId, userId: user?._id }));
   }, [guestId, user?._id, dispatch]);
@@ -58,7 +58,7 @@ const Navbar = () => {
 
               <div className="nav-links flex flex-col items-left space-x-6 md:justify-between md:items-center  md:flex-row mt-5 md:mt-0">
                 <NavLink
-                  to="/collections/all"
+                  to="/collections/men"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   All Collections

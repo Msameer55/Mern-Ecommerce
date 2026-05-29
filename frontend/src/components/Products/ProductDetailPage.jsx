@@ -89,7 +89,7 @@ const ProductDetailPage = () => {
       toast.error(error.message || "Failed to add product to wishlist");
     }
   };
-  
+
   const removeFromWishlist = async (productId) => {
     try {
       const data = await dispatch(
@@ -104,13 +104,27 @@ const ProductDetailPage = () => {
     }
   };
 
+  // Fetch single product + similar products whenever the id changes
+  useEffect(() => {
+    if (id) {
+      dispatch(getSingleProduct(id));
+      dispatch(getSimilarProduct(id));
+    }
+  }, [id, dispatch]);
+
+  // Sync selectedImage when productData changes
+  useEffect(() => {
+    if (productData) {
+      setSelectedImage(productData.images?.[0] || null);
+      setSelectedColor("");
+      setSelectedSize("");
+      setQty(1);
+    }
+  }, [productData]);
+
   const handleQtyChange = (action) => {
-    if (action === "plus") {
-      setQty((prev) => prev + 1);
-    }
-    if (action === "minus" && qty > 1) {
-      setQty((prev) => prev - 1);
-    }
+    if (action === "plus") setQty((prev) => prev + 1);
+    if (action === "minus" && qty > 1) setQty((prev) => prev - 1);
   };
 
   const handleAddToCart = async () => {
@@ -310,11 +324,10 @@ const ProductDetailPage = () => {
                         <button
                           key={i}
                           className={`cursor-pointer min-w-[3rem] px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 outline-none
-                        ${
-                          selectedSize === size
-                            ? "bg-black text-white shadow-md scale-105"
-                            : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
-                        }`}
+                        ${selectedSize === size
+                              ? "bg-black text-white shadow-md scale-105"
+                              : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
+                            }`}
                           onClick={() => setSelectedSize(size)}
                         >
                           {size}
@@ -372,11 +385,10 @@ const ProductDetailPage = () => {
                   <button
                     onClick={handleAddToCart}
                     disabled={buttonDisabled}
-                    className={`cursor-pointer w-full sm:flex-1 h-14 rounded-full font-bold text-lg tracking-wide text-white transition-all duration-300 flex items-center justify-center gap-2 ${
-                      buttonDisabled
+                    className={`cursor-pointer w-full sm:flex-1 h-14 rounded-full font-bold text-lg tracking-wide text-white transition-all duration-300 flex items-center justify-center gap-2 ${buttonDisabled
                         ? "opacity-50 bg-gray-400 cursor-not-allowed"
                         : "bg-black hover:bg-gray-900 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                    }`}
+                      }`}
                   >
                     {buttonDisabled ? (
                       "Adding..."

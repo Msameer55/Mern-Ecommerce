@@ -46,9 +46,7 @@ const CollectionPage = () => {
   };
 
   useEffect(() => {
-    // add event listener
     document.addEventListener("mousedown", closeSidebar);
-    // close event listener
     return () => {
       document.removeEventListener("mousedown", closeSidebar);
     };

@@ -7,9 +7,7 @@ import { Order } from "../models/Order.js"
 
 export const getOrders = async (req, res) => {
     try {
-        // Fetch all orders for user but hide heavy arrays/objects
         const orders = await Order.find({ user: req.user._id })
-            .select("-orderItems -shippingAddress") // exclude heavy fields
             .sort({ createdAt: -1 });
 
         if (orders) {
@@ -23,18 +21,16 @@ export const getOrders = async (req, res) => {
     }
 }
 
-
 // @route GET /api/orders/:id
 // @desc Get Details order by ID
 // @access Private
-
 export const getOrdersById = async (req, res) => {
     try {
-        const orders = await Order.findById(req.params.id);
+        const orders = await Order.findById(req.params.id).populate("user", "name email role");
         if (!orders) {
             return res.status(404).json({ success: false, message: "Order not found" })
         }
-        return res.status(201).json({ success: true, message: "Order fetched successfully", orders })
+        return res.status(201).json({ success: true, message: "Order detail fetched successfully", orders })
     } catch (error) {
         return res.status(500).json({
             success: false,

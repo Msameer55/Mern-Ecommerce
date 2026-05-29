@@ -1,6 +1,35 @@
 import mongoose from "mongoose";
 import Product from "../models/Product.js"
 
+// Get Distinct Filters for frontend dropdowns
+export const getProductFilters = async (req, res) => {
+    try {
+        const categories = await Product.distinct("category");
+        const brands = await Product.distinct("brand");
+        const materials = await Product.distinct("material");
+        const collections = await Product.distinct("collections");
+        const colors = await Product.distinct("colors");
+        const sizes = await Product.distinct("sizes");
+        const genders = await Product.distinct("gender");
+
+        return res.status(200).json({
+            success: true,
+            filters: {
+                categories: categories.filter(Boolean),
+                brands: brands.filter(Boolean),
+                materials: materials.filter(Boolean),
+                collections: collections.filter(Boolean),
+                colors: colors.filter(Boolean),
+                sizes: sizes.filter(Boolean),
+                genders: genders.filter(Boolean)
+            }
+        });
+    } catch (error) {
+        return res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+
 // Get a Product 
 export const getProduct = async (req, res) => {
     const { id } = req.params;
@@ -29,7 +58,7 @@ export const getProduct = async (req, res) => {
 export const bestSeller = async (req, res) => {
     try {
         const bestSellers = await Product.find().sort({ rating: -1 }).limit(10);
-        console.log(bestSellers , "best sellers")
+        console.log(bestSellers, "best sellers")
         return res.status(200).json({ success: true, message: "Best sellers fetched successfully", bestSellers });
     }
     catch (error) {
@@ -42,7 +71,7 @@ export const bestSeller = async (req, res) => {
 export const newArrival = async (req, res) => {
     try {
         const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
-        console.log(newArrivals , "new arrivals")
+        console.log(newArrivals, "new arrivals")
         return res.status(200).json({ success: true, message: "New arrivals fetched successfully", newArrivals });
     }
     catch (error) {
@@ -158,7 +187,6 @@ export const deleteProduct = async (req, res) => {
     }
 }
 
-
 // get all products with query 
 export const getAllProducts = async (req, res) => {
 
@@ -182,19 +210,19 @@ export const getAllProducts = async (req, res) => {
 
         // filter logic
         if (collections && collections.toLocaleLowerCase() != "all") {
-            query.collections = collections;
+            query.collections = { $regex: new RegExp(`^${collections}$`, 'i') };
         }
 
         if (category && category.toLocaleLowerCase() != "all") {
-            query.category = category;
+            query.category = { $regex: new RegExp(`^${category}$`, 'i') };
         }
 
         if (material) {
-            query.material = { $in: material.split(",") };
+            query.material = { $in: material.split(",").map(m => new RegExp(`^${m}$`, 'i')) };
         }
 
         if (brand) {
-            query.brand = { $in: brand.split(",") };
+            query.brand = { $in: brand.split(",").map(b => new RegExp(`^${b}$`, 'i')) };
         }
 
         if (size) {
@@ -202,11 +230,18 @@ export const getAllProducts = async (req, res) => {
         }
 
         if (color) {
-            query.colors = { $in: [color] };
+            query.colors = { $in: [new RegExp(`^${color}$`, 'i')] };
         }
 
         if (gender) {
-            query.gender = gender;
+            const genderFilter = gender.toLowerCase();
+            if (genderFilter === 'mens' || genderFilter === 'men') {
+                query.gender = { $regex: new RegExp('^men$', 'i') };
+            } else if (genderFilter === 'womens' || genderFilter === 'women') {
+                query.gender = { $regex: new RegExp('^women$', 'i') };
+            } else {
+                query.gender = { $regex: new RegExp(`^${gender}$`, 'i') };
+            }
         }
 
         if (minPrice || maxPrice) {

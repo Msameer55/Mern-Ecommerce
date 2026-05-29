@@ -30,7 +30,37 @@ export const filterProductsByQuery = createAsyncThunk("/product/fetchByQuery", a
     if (limit) { query.append("limit", limit) }
     try {
         const response = await ProductApi.fetchProductsByQuery(query);
-        console.log(response.data, "response from  product slice fetch by product query ")
+        // console.log(response.data, "response from  product slice fetch by product query ")
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
+
+export const fetchSingleProduct = createAsyncThunk("product/fetchSingleProduct", async (productId, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.fetchProductById(productId);
+        // console.log(response.data, "single product");
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
+
+export const fetchSimilarProductById = createAsyncThunk("product/fetchSimilar", async (productId, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.fetchSimilarProduct(productId);
+        // console.log(response.data, "similar product");
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
+
+export const bestSellersProduct = createAsyncThunk("/products/bestseller", async (_, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.fetchBestSellersProduct();
+        // console.log(response.data, "bestseller");
         return response.data;
     } catch (error) {
         return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
@@ -59,10 +89,22 @@ export const getSimilarProduct = createAsyncThunk("/product/similarProduct", asy
     }
 })
 
+export const newArrivalProduct = createAsyncThunk("/prodcuts/newArrival", async (_, { rejectWithValue }) => {
+    try {
+        const response = await ProductApi.fectchNewArrivalProduct();
+        // console.log(response.data, "new arrival")
+        return response.data;
+    } catch (error) {
+        return rejectWithValue(error?.response?.data?.message || error?.response?.data || error.message || "Something went wrong");
+    }
+})
+
 const initialState = {
     allProducts: [],
-    singleProduct: null,
-    similarProduct: null,
+    singleProduct: {},
+    similarProduct: [],
+    bestSeller: [],
+    newArrival: [],
     error: false,
     loading: false,
     filters: {
@@ -72,12 +114,12 @@ const initialState = {
         gender: "",
         minPrice: "",
         maxPrice: "",
+        sortBy: "",
         search: "",
         category: "",
         material: "",
         brand: "",
-        limit: "",
-        sortBy: ""
+        limit: ""
     }
 }
 
@@ -89,20 +131,7 @@ const productSlice = createSlice({
             state.filters = { ...state.filters, ...action.payload }
         },
         clearFilters: (state) => {
-            state.filters = {
-                collections: "",
-                size: "",
-                color: "",
-                gender: "",
-                minPrice: "",
-                maxPrice: "",
-                search: "",
-                category: "",
-                material: "",
-                brand: "",
-                limit: "",
-                sortBy: ""
-            }
+            state.filters = initialState.filters;
         }
     },
     extraReducers: (builder) => {
@@ -113,7 +142,7 @@ const productSlice = createSlice({
             })
             .addCase(filterProductsByQuery.fulfilled, (state, action) => {
                 state.loading = false;
-                state.allProducts = action.payload.products || [];
+                state.allProducts = action.payload.products;
                 state.error = null;
             })
             .addCase(filterProductsByQuery.rejected, (state, action) => {
@@ -143,6 +172,50 @@ const productSlice = createSlice({
                 state.error = null;
             })
             .addCase(getSimilarProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(fetchSingleProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchSingleProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.singleProduct = action.payload.product;
+            })
+            .addCase(fetchSingleProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(fetchSimilarProductById.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchSimilarProductById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.similarProduct = action.payload.similarProducts;
+            })
+            .addCase(fetchSimilarProductById.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(bestSellersProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(bestSellersProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.bestSeller = action.payload.bestSellers;
+            })
+            .addCase(bestSellersProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(newArrivalProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(newArrivalProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.newArrival = action.payload.newArrivals;
+            })
+            .addCase(newArrivalProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

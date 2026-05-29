@@ -18,7 +18,6 @@ export const getAllOrders = async (req, res) => {
     }
 }
 
-
 // @route PUT /api/admin/orders/:id
 // @desc  update the order details
 // @access Private

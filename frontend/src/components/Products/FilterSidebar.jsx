@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import axiosInstance from "../../config/axios";
 
 const FilterSidebar = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const FilterSidebar = () => {
       category: "",
       gender: "",
       color: "",
-      sizes: [],
+      size: [],
       brand: [],
       material: [],
       minPrice: 0,
@@ -21,7 +22,7 @@ const FilterSidebar = () => {
     setPriceRange([0, 100]);
 
     setSearchParams({});
-    navigate(window.location.pathname); 
+    navigate(window.location.pathname);
   }
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,49 +30,37 @@ const FilterSidebar = () => {
     category: "",
     gender: "",
     color: "",
-    sizes: [],
+    size: [],
     brand: [],
     material: [],
     minPrice: 0,
     maxPrice: 100,
   });
 
-  const categories = ["Top Wear", "Bottom Wear"];
-  const genders = ["Mens", "Womens"];
-  const colors = [
-    "Red",
-    "Blue",
-    "Green",
-    "Black",
-    "White",
-    "Purple",
-    "Orange",
-    "Yellow",
-    "Pink",
-  ];
-  const [priceRange, setPriceRange] = useState([0, 100]);
-  const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-  const materials = [
-    "Cotton",
-    "Fabric",
-    "Linean",
-    "Silk",
-    "Polyster",
-    "Wool",
-    "Denin",
-    "Fleece",
-  ];
+  const [filterOptions, setFilterOptions] = useState({
+    categories: [],
+    genders: [],
+    colors: [],
+    sizes: [],
+    materials: [],
+    brands: [],
+  });
 
-  const brands = [
-    "Nike",
-    "Adidas",
-    "Puma",
-    "Levis",
-    "Zara",
-    "Gucci",
-    "H&M",
-    "Under Armour",
-  ];
+  const [priceRange, setPriceRange] = useState([0, 100000]);
+
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const response = await axiosInstance.get("/api/products/meta/filters");
+        if (response.data.success) {
+          setFilterOptions(response.data.filters);
+        }
+      } catch (error) {
+        console.error("Error fetching filters:", error);
+      }
+    };
+    fetchFilterOptions();
+  }, []);
 
   // Convert Search Params into plain object
   useEffect(() => {
@@ -81,7 +70,7 @@ const FilterSidebar = () => {
       category: params.category || "",
       gender: params.gender || "",
       color: params.color || "",
-      sizes: params.sizes ? params.sizes.split(",") : [],
+      size: params.size ? params.size.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       minPrice: params.minPrice || 0,
@@ -140,7 +129,7 @@ const FilterSidebar = () => {
           <label className="block  text-gray-700 font-medium mb-2">
             Categories
           </label>
-          {categories.map((category) => {
+          {filterOptions.categories.map((category) => {
             return (
               <div key={category} className="flex items-center mb-1">
                 <input
@@ -164,7 +153,7 @@ const FilterSidebar = () => {
           <label className="block  text-gray-700 font-medium mb-2">
             Gender
           </label>
-          {genders.map((gender) => {
+          {filterOptions.genders.map((gender) => {
             return (
               <div key={gender} className="flex items-center mb-1">
                 <input
@@ -186,13 +175,14 @@ const FilterSidebar = () => {
         {/* Color Filter */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">Color</label>
-          {colors.map((color) => (
+          <div className="flex flex-wrap gap-2">
+            {filterOptions.colors.map((color) => (
             <button
               key={color}
               type="buttons"
               name="color"
-              className={`mr-2 w-8 h-8 rounded-full ${filters.color === color
-                ? "border-2 border-black"
+              className={`cursor-pointer mr-2 w-8 h-8 rounded-full ${filters.color === color
+                ? "ring-2 ring-offset-2"
                 : "border border-gray-300"
                 }`}
               value={color}
@@ -200,20 +190,21 @@ const FilterSidebar = () => {
               style={{ backgroundColor: color.toLowerCase() }}
             ></button>
           ))}
+          </div>
         </div>
 
         {/* Size Filter */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">Sizes</label>
-          {sizes.map((size) => (
+          {filterOptions.sizes.map((size) => (
             <div key={size} className="flex items-center mb-1">
               <input
                 type="checkbox"
-                name="sizes"
+                name="size"
                 className="mr-2"
                 value={size}
                 onChange={handleFilterChange}
-                checked={filters.sizes.includes(size)}
+                checked={filters.size.includes(size)}
               />
               <span>{size}</span>
             </div>
@@ -223,7 +214,7 @@ const FilterSidebar = () => {
         {/* Brand Filter */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">Brand</label>
-          {brands.map((brand) => (
+          {filterOptions.brands.map((brand) => (
             <div key={brand} className="flex items-center mb-1">
               <input
                 type="checkbox"
@@ -243,7 +234,7 @@ const FilterSidebar = () => {
           <label className="block text-gray-700 font-medium mb-2">
             Material
           </label>
-          {materials.map((material) => (
+          {filterOptions.materials.map((material) => (
             <div key={material} className="flex items-center mb-1">
               <input
                 type="checkbox"
@@ -264,8 +255,16 @@ const FilterSidebar = () => {
             Price Range
           </label>
           <div className="flex flex-col space-y-2">
-            <input type="range" min="0" max="100" />
-            <span className="text-sm text-gray-500">0 - 100</span>
+            <input
+              type="range"
+              name="maxPrice"
+              min={0}
+              max={100}
+              value={filters.maxPrice || 100}
+              onChange={handleFilterChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <span className="text-sm text-gray-500">0 - {filters.maxPrice || 100}</span>
           </div>
         </div>
       </div>

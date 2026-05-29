@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsTwitterX } from "react-icons/bs";
 import { FaFacebook } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { subscriberUser } from "../../redux/slice/subscriberSlice";
+import { toast } from "react-toastify";
 
 const Footer = () => {
+  const dispatch = useDispatch();
+  const { subscriber } = useSelector((state) => state.subscriber);
+  const [email, setEmail] = useState("");
+
+  // Show the subscribe user to admin 
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await dispatch(subscriberUser({ email })).unwrap();
+      console.log(res, "res from footer subscribe");
+      toast.success(res.message || "Subscribed Sucessfully");
+    } catch (error) {
+      toast.error(error || "Something went wrong");
+    }
+  }
+
   return (
     <div className="footer-main-container border-t border-gray-300">
       <div className="inner-container container mx-auto   p-6">
-        <div className="flex justify-between items-start">
-          <div className=" col newsletter w-[35%]">
+        <div className="flex  flex-col md:flex-row justify-between items-start">
+          <div className=" col newsletter md:w-[35%] w-full">
             <h3 className="text-[16px] font-semibold ">Newsletter</h3>
             <p className="text-[14px] my-4">
               Be the first to hear about our new products, exclusive events and
@@ -18,11 +37,14 @@ const Footer = () => {
             <p className="text-[14px] font-semibold">
               Sign up and get 10% off your first order
             </p>
-            <form className="newsletter-form my-4">
+            <form className="newsletter-form my-4"
+              onSubmit={handleSubscribe}>
               <div className="flex justify-start items-center">
                 <input
                   type="text"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="border min-w-[80px] h-[38px] text-[14px] font-normal focus:outline-none outline-none px-3 "
                 />
                 <button
@@ -35,7 +57,7 @@ const Footer = () => {
             </form>
           </div>
 
-          <div className=" col main-menus w-[25%]">
+          <div className=" col main-menus md:w-[25%] w-full">
             <h3 className="text-[16px] font-semibold mb-5">Shop</h3>
             <ul>
               <li className="text-[14px] font-normal cursor-pointer ">
@@ -53,7 +75,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className=" col quick-links w-[25%]">
+          <div className=" col quick-links md:w-[25%] w-full">
             <h3 className="text-[16px] font-semibold mb-5">Support</h3>
             <ul>
               <li className="text-[14px] font-normal cursor-pointer ">
@@ -69,7 +91,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className=" col social-links w-[25%]">
+          <div className=" col social-links md:w-[25%] w-full">
             <h3 className="text-[16px] font-semibold mb-5">Follow Us</h3>
             <div className="flex justify-start gap-3 items-center mb-6">
               <BsTwitterX />
@@ -86,7 +108,7 @@ const Footer = () => {
       </div>
       <div className="footer-bottom mt-4">
         <div className="bg-[#2d2d2d] text-white p-3 text-center text-[14px]">
-             Copyright &copy; 2025 All right reserved
+          Copyright &copy; 2025 All right reserved
         </div>
       </div>
     </div>

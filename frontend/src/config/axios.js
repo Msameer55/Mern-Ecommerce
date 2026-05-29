@@ -6,10 +6,11 @@ const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL
 });
 
-// Add a request interceptor this takes the latest token in the headers everytime it is called
+// ✅ 1. Request Interceptor: Attach Token to every request
 axiosInstance.interceptors.request.use((config) => {
     const token = getActiveAuthToken();
-    const tokenValid = verifyTokenIntegrity()
+    const tokenValid = verifyTokenIntegrity(); // Check if token is locally valid (not expired)
+
     if (token && tokenValid) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -18,19 +19,17 @@ axiosInstance.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-// Add a response interceptor to handle token refresh and security violations
+// ✅ 2. Response Interceptor: Handle 401 Unauthorized errors
 axiosInstance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
+    (response) => response,
     async (error) => {
         const originalRequest = error.config;
 
-        // SECURITY: Handle token manipulation and security violations immediately
+        // If the backend returns 401 (Unauthorized/Expired)
         if (error.response?.status === 401) {
-            const errorMessage = error.response?.data?.message || '';
 
-            // Check for security violations that require immediate logout
+            // Check for security violations first (immediate logout)
+            const errorMessage = error.response?.data?.message || '';
             const securityViolations = [
                 'Invalid token - role mismatch detected',
                 'Invalid token - email mismatch detected',
@@ -39,71 +38,36 @@ axiosInstance.interceptors.response.use(
                 'Account not verified or not found'
             ];
 
-            const isSecurityViolation = securityViolations.some(violation =>
-                errorMessage.includes(violation)
-            );
+            const isSecurityViolation = securityViolations.some(v => errorMessage.includes(v));
 
-            if (isSecurityViolation) {
-                console.error('SECURITY VIOLATION DETECTED:', errorMessage);
+            if (isSecurityViolation || !originalRequest._retry) {
+                console.warn("Session expired or unauthorized. Logging out...");
 
-                // Immediately clear all auth data
+                // Clear all auth data
                 clearActiveAuthToken();
-                localStorage.removeItem('lastServerValidation');
+                localStorage.removeItem('user');
 
-                // Dispatch logout action if store is available
                 if (window.store) {
                     try {
                         const { logout } = await import('../redux/slice/authSlice');
                         window.store.dispatch(logout());
+
+                        // Show toast message if store is available
+                        const { toast } = await import('react-toastify');
+                        toast.error(errorMessage || "Session expired. Please login again.");
                     } catch (e) {
-                        console.error('Failed to dispatch logout:', e);
+                        console.error("Logout dispatch failed:", e);
                     }
                 }
 
-                // Force redirect to login page
-                window.location.href = '/login';
+                // Redirect after a short delay to allow toast to be seen
+                setTimeout(() => {
+                    const isAdminPath = window.location.pathname.startsWith("/admin");
+                    window.location.href = isAdminPath ? "/login" : "/login";
+                }, 1500);
+
                 return Promise.reject(error);
             }
-
-            // Check if the error is due to token requiring refresh (non-security related)
-            if (error.response?.data?.requiresRefresh && !originalRequest._retry) {
-                originalRequest._retry = true;
-
-                try {
-                    // Call refresh token endpoint
-                    const refreshResponse = await axios.post(
-                        `${import.meta.env.VITE_API_URL}/api/auth/refresh-token`,
-                        {},
-                        {
-                            headers: {
-                                Authorization: `Bearer ${getActiveAuthToken()}`
-                            }
-                        }
-                    );
-
-                    // Update token in localStorage
-                    const newToken = refreshResponse.data.token;
-                    setActiveAuthToken(newToken);
-
-                    // Update the original request with new token
-                    originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-                    // Dispatch refresh token action to update Redux store
-                    if (window.store) {
-                        const { refreshToken } = await import('../redux/slice/authSlice');
-                        window.store.dispatch(refreshToken());
-                    }
-
-                    // Retry the original request
-                    return axiosInstance(originalRequest);
-                } catch (refreshError) {
-                    // If refresh fails, redirect to login
-                    clearActiveAuthToken();
-                    window.location.href = '/login';
-                    return Promise.reject(refreshError);
-                }
-            }
-
         }
 
         return Promise.reject(error);

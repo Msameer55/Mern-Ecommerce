@@ -9,14 +9,14 @@ const orderItemSchema = new mongoose.Schema({
     ref: "Product",
     required: true,
   },
-  name:     { type: String, required: true },
-  image:    { type: String, required: true },
-  price:    { type: Number, required: true },
-  size:     { type: String },
-  color:    { type: String },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  price: { type: Number, required: true },
+  size: { type: String },
+  color: { type: String },
   quantity: { type: Number, required: true },
 }, {
-    _id: false
+  _id: false
 });
 
 // ─────────────────────────────────────────
@@ -34,17 +34,21 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     shippingAddress: {
-      address:    { type: String, required: true },
-      city:       { type: String, required: true },
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
+      email: { type: String, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
       postalCode: { type: String, required: true },
-      country:    { type: String, required: true },
+      country: { type: String, required: true },
     },
     paymentMethod: { type: String, required: true },
-    totalPrice:    { type: Number, required: true },
-    isPaid:        { type: Boolean, default: false },
-    paidAt:        { type: Date },
-    isDelivered:   { type: Boolean, default: false },
-    deliveredAt:   { type: Date },
+    totalPrice: { type: Number, required: true },
+    isPaid: { type: Boolean, default: false },
+    paidAt: { type: Date },
+    isDelivered: { type: Boolean, default: false },
+    deliveredAt: { type: Date },
     paymentStatus: { type: String, default: "pending" },
     status: {
       type: String,
@@ -55,4 +59,4 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Order    = mongoose.model("Order", orderSchema);
+export const Order = mongoose.model("Order", orderSchema);

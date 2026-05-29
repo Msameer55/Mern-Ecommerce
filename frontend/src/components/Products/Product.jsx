@@ -1,39 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
+import ReactSpinner from "../ReactSpinner";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../redux/slice/cartSlice";
 
 const Product = ({ product }) => {
-  const displayPrice = product.discountedPrice || product.price;
-  const originalPrice = product.discountedPrice ? product.price : null;
-  const saveRs = originalPrice ? Math.floor(originalPrice - displayPrice) : 0;
-  const [selectedColor, setSelectedColor] = useState("");
+  // Use discountedPrice if available as the actual selling price, else regular price.
+  const sellingPrice = product.discountedPrice || product.price;
+  const isDiscounted = product.discountedPrice && product.discountedPrice < product.price;
+  const saveRs = isDiscounted ? Math.floor(product.price - product.discountedPrice) : 0;
+  const [loading, setLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
-
-  const handleAddToCart = () => {
-    if (!selectedColor || !selectedSize) {
-      toast.error("Please select size and color");
-    } else {
-      toast.success("Product has been added to your cart");
+  const [selectedColor, setSelectedColor] = useState("");
+  const { guestId, user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const handleAddToCart = async () => {
+    setLoading(true);
+    try {
+      if (!selectedColor || !selectedSize) {
+        toast.error("Please select size and color");
+      } else {
+        await dispatch(addToCart({ productId: product._id, color: selectedColor, size: selectedSize, quantity: 1, guestId, userId: user?._id || null }));
+        toast.success("Product has been added to your cart");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className=" bg-white">
-      <div className="product-image h-[300px] w-full overflow-hidden rounded">
+    <div className="bg-white">
+      <div className="min-h-[380px] h-[400px] overflow-hidden mb-4">
         <NavLink to={`/product/${product._id}`}>
           <img
-            src={product.images[0]?.url}
-            alt={product.images[0]?.altText || product.name}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = `https://placehold.co/400x300/e2e8f0/94a3b8?text=${encodeURIComponent(product.name)}`;
-            }}
+            src={product.images?.[0]?.url || "https://picsum.photos/500/500"}
+            alt={product.images?.[0]?.altText || product.name}
+            className="w-full h-full object-cover rounded"
           />
         </NavLink>
       </div>
+
       <NavLink to={`/product/${product._id}`}>
-        <h3 className="my-3 font-semibold leading-[19px] text-[16px] mb-1">{product.name}</h3>
+        <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
       </NavLink>
 
       {product.colors && (
@@ -41,7 +52,7 @@ const Product = ({ product }) => {
           {product.colors.map((color, index) => (
             <span
               key={index}
-              className={`cursor-pointer w-7 h-7 rounded-full border ${selectedColor === color ? "border-2" : "border"}`}
+              className={`cursor-pointer w-7 h-7 rounded-full ${selectedColor === color ? "border-3 border-black" : "border border-gray-300"}`}
               onClick={() => setSelectedColor(color)}
               style={{ backgroundColor: color }}
             />
@@ -67,14 +78,14 @@ const Product = ({ product }) => {
 
       <div className="mb-3">
         <span className="text-md font-bold text-black">
-          PKR {displayPrice}
+          PKR {sellingPrice}
         </span>
-        {originalPrice && (
+        {isDiscounted && (
           <span className="ml-2 text-sm line-through text-gray-500">
-            PKR {originalPrice}
+            PKR {product.price}
           </span>
         )}
-        {saveRs > 0 && (
+        {isDiscounted && (
           <span className="ml-2 text-gray-600 text-[13px]">
             Save Rs {saveRs}
           </span>
@@ -83,9 +94,10 @@ const Product = ({ product }) => {
 
       <button
         onClick={handleAddToCart}
-        className="cursor-pointer bg-black text-white w-full py-2  hover:bg-gray-800 transition"
+        disabled={loading}
+        className={`  cursor-pointer bg-black text-white w-full py-2  hover:bg-gray-800 transition ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        Add to Cart
+        {loading ? <ReactSpinner /> : "Add to Cart"}
       </button>
     </div>
   );

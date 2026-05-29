@@ -5,7 +5,10 @@ import "./index.css"
 import store from './redux/store.js'
 import { Provider } from 'react-redux'
 
-createRoot(document.getElementById('root')).render(
+const root = createRoot(document.getElementById('root'));
+window.store = store; // Expose store for axios interceptors
+
+root.render(
   <Provider store={store}>
     <App />
   </Provider>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../redux/slice/authSlice";
 import { toast } from "react-toastify";
@@ -8,6 +8,12 @@ import ReactSpinner from "../ReactSpinner";
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckout = redirect.includes("checkout");
+
   const { loading } = useSelector((state) => state.auth);
   const [form, setForm] = useState({
     name: "",
@@ -23,12 +29,13 @@ const Register = () => {
     e.preventDefault();
     try {
       const result = await dispatch(registerUser(form)).unwrap();
-      toast.success(result.message)
-      navigate("/");
+      toast.success(result.message);
+      // Redirect to OTP verification page, passing email and checkout redirect
+      navigate("/verify-otp", { state: { email: result.email, redirect } });
     } catch (error) {
-      toast.error(error || error?.message)
+      toast.error(error || error?.message);
     }
-  }
+  };
 
   return (
     <>
@@ -46,7 +53,7 @@ const Register = () => {
                       Hey! there 👋
                     </h2>
                     <p className="text-md text-gray-500">
-                      Enter your name, email and password to Register
+                      Register your account from here
                     </p>
                   </div>
                   <form className="space-y-4" onSubmit={handleSubmit}>
@@ -85,7 +92,7 @@ const Register = () => {
                     </button>
                   </form>
                   <div className="mt-5">
-                    <p>Already have an aaccount ? <NavLink className="text-blue-600 underline" to="/login">Login here</NavLink></p>
+                    <p>Already have an aaccount ? <NavLink className="text-blue-600 underline" to={isCheckout ? `/login?redirect=${redirect}` : `/login`}>Login here</NavLink></p>
 
                   </div>
                 </div>
@@ -93,11 +100,11 @@ const Register = () => {
 
               {/* Right Side - Image */}
               <div className="image-section hidden md:block md:w-1/2 h-full">
-                <img
+                {/* <img
                   src="/assets/womens-collection.webp"
                   alt=""
                   className="w-full h-full object-cover"
-                />
+                /> */}
               </div>
             </div >
           </div >

@@ -17,19 +17,20 @@ const ProductList = ({ title, products = [], isSwiper = true }) => {
   return (
     <section className="py-10 px-4 relative">
       {title && (
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-5xl font-bold tracking-tight">{title}</h2>
+        <div className="flex justify-between items-end mb-8 border-b pb-4 border-gray-200">
+          <div className="">
+            <h2 className="text-3xl font-bold uppercase tracking-wide text-gray-900">{title}</h2>
+          </div>
 
           {/* Swiper nav buttons (shown only if Swiper) */}
           {isSwiper && (
             <div className="flex gap-2">
               <button
                 ref={prevRef}
-                className={`px-4 py-2 rounded-[8px] text-[20px] transition ${
-                  isBeginning
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-black text-white hover:bg-gray-800 cursor-pointer"
-                }`}
+                className={`text-[20px] font-[300] transition rounded-full w-[40px] h-[40px] flex justify-center items-center ${isBeginning
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-800 cursor-pointer"
+                  }`}
                 disabled={isBeginning}
               >
                 <FaArrowLeftLong />
@@ -38,11 +39,10 @@ const ProductList = ({ title, products = [], isSwiper = true }) => {
               </button>
               <button
                 ref={nextRef}
-                className={`px-4 py-2 rounded-[8px] text-[20px] transition ${
-                  isEnd
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-black text-white hover:bg-gray-800 cursor-pointer"
-                }`}
+                className={`text-[20px] font-[300] transition rounded-full w-[40px] h-[40px] flex justify-center items-center ${isEnd
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-800 cursor-pointer"
+                  }`}
                 disabled={isEnd}
               >
                 <FaArrowRightLong />

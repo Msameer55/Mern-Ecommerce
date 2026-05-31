@@ -32,7 +32,7 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer style={{ zIndex: 99999 }} position="top-right" autoClose={3000} />
         <ScrollToTop />
         <Routes>
           {/* User Layout */}

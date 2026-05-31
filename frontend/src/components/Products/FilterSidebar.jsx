@@ -15,11 +15,11 @@ const FilterSidebar = () => {
       brand: [],
       material: [],
       minPrice: 0,
-      maxPrice: 100,
+      maxPrice: 100000,
     };
 
     setFilters(resetValues);
-    setPriceRange([0, 100]);
+    setPriceRange([0, 100000]);
 
     setSearchParams({});
     navigate(window.location.pathname);
@@ -34,7 +34,7 @@ const FilterSidebar = () => {
     brand: [],
     material: [],
     minPrice: 0,
-    maxPrice: 100,
+    maxPrice: 100000,
   });
 
   const [filterOptions, setFilterOptions] = useState({
@@ -74,9 +74,9 @@ const FilterSidebar = () => {
       brand: params.brand ? params.brand.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       minPrice: params.minPrice || 0,
-      maxPrice: params.maxPrice || 100,
+      maxPrice: params.maxPrice || 100000,
     });
-    setPriceRange([0, params.maxPrice || 100]);
+    setPriceRange([0, params.maxPrice || 100000]);
   }, [searchParams]);
 
   const handleFilterChange = (e) => {
@@ -166,7 +166,7 @@ const FilterSidebar = () => {
               focus:ring-blue-400 border-gray-300"
                   checked={filters.gender === gender}
                 />
-                <span>{gender}</span>
+                <span>{gender.charAt(0).toUpperCase() + gender.slice(1)}</span>
               </div>
             );
           })}
@@ -177,19 +177,19 @@ const FilterSidebar = () => {
           <label className="block text-gray-700 font-medium mb-2">Color</label>
           <div className="flex flex-wrap gap-2">
             {filterOptions.colors.map((color) => (
-            <button
-              key={color}
-              type="buttons"
-              name="color"
-              className={`cursor-pointer mr-2 w-8 h-8 rounded-full ${filters.color === color
-                ? "ring-2 ring-offset-2"
-                : "border border-gray-300"
-                }`}
-              value={color}
-              onClick={handleFilterChange}
-              style={{ backgroundColor: color.toLowerCase() }}
-            ></button>
-          ))}
+              <button
+                key={color}
+                type="buttons"
+                name="color"
+                className={`cursor-pointer mr-2 w-8 h-8 rounded-full ${filters.color === color
+                  ? "ring-2 ring-offset-2"
+                  : "border border-gray-300"
+                  }`}
+                value={color}
+                onClick={handleFilterChange}
+                style={{ backgroundColor: color.toLowerCase() }}
+              ></button>
+            ))}
           </div>
         </div>
 
@@ -259,12 +259,12 @@ const FilterSidebar = () => {
               type="range"
               name="maxPrice"
               min={0}
-              max={100}
-              value={filters.maxPrice || 100}
+              max={100000}
+              value={filters.maxPrice || 100000}
               onChange={handleFilterChange}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
-            <span className="text-sm text-gray-500">0 - {filters.maxPrice || 100}</span>
+            <span className="text-sm text-gray-500">0 - {filters.maxPrice || 100000}</span>
           </div>
         </div>
       </div>

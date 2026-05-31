@@ -8,7 +8,9 @@ const wishlistItemSchema = new mongoose.Schema({
     },
     name: String,
     image: String,
-    price: Number
+    price: Number,
+    sizes: [String],
+    colors: [String]
 }, { _id: false });
 
 const wishlistSchema = new mongoose.Schema({

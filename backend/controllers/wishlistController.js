@@ -10,6 +10,24 @@ const getWishlist = async (userId, guestId) => {
     return null;
 };
 
+const populateWishlistItems = async (wishlist) => {
+    if (!wishlist || !wishlist.products) return wishlist;
+    const populatedProducts = await Promise.all(
+        wishlist.products.map(async (item) => {
+            const product = await Product.findById(item.productId).select("sizes colors");
+            const itemObj = item.toObject ? item.toObject() : item;
+            return {
+                ...itemObj,
+                sizes: product ? product.sizes : (item.sizes || []),
+                colors: product ? product.colors : (item.colors || [])
+            };
+        })
+    );
+    const wishlistObj = wishlist.toObject ? wishlist.toObject() : wishlist;
+    wishlistObj.products = populatedProducts;
+    return wishlistObj;
+};
+
 // @route GET /api/wishlist
 // @desc Get Products from wishlist
 // @access PUBLIC
@@ -18,7 +36,8 @@ export const getWishlistItems = async (req, res) => {
     try {
         const wishlist = await getWishlist(userId, guestId);
         if (wishlist) {
-            return res.status(200).json({ success: true, message: "Products in the wishlist", wishlist })
+            const populatedWishlist = await populateWishlistItems(wishlist);
+            return res.status(200).json({ success: true, message: "Products in the wishlist", wishlist: populatedWishlist })
         }
         else {
             return res.status(200).json({ success: true, message: "Wishlist not found", wishlist: { products: [] } })
@@ -59,14 +78,17 @@ export const addProductToWishlist = async (req, res) => {
                 productId,
                 name: product.name,
                 image: product.images?.[0]?.url || "",
-                price: product.discountedPrice || product.price
+                price: product.discountedPrice || product.price,
+                sizes: product.sizes || [],
+                colors: product.colors || []
             });
 
             await wishlist.save();
+            const populatedWishlist = await populateWishlistItems(wishlist);
             return res.status(200).json({
                 success: true,
                 message: "Product added to wishlist",
-                wishlist
+                wishlist: populatedWishlist
             });
         }
 
@@ -79,15 +101,18 @@ export const addProductToWishlist = async (req, res) => {
                     productId,
                     name: product.name,
                     image: product.images?.[0]?.url || "",
-                    price: product.discountedPrice || product.price
+                    price: product.discountedPrice || product.price,
+                    sizes: product.sizes || [],
+                    colors: product.colors || []
                 }
             ]
         });
 
+        const populatedWishlist = await populateWishlistItems(newWishlist);
         return res.status(201).json({
             success: true,
             message: "Wishlist created successfully",
-            wishlist: newWishlist
+            wishlist: populatedWishlist
         });
     } catch (error) {
         return res.status(500).json({
@@ -116,10 +141,11 @@ export const deleteProductFromWishlist = async (req, res) => {
         if (productIndex > -1) {
             wishlist.products.splice(productIndex, 1);
             await wishlist.save();
+            const populatedWishlist = await populateWishlistItems(wishlist);
             return res.status(200).json({
                 success: true,
                 message: "Product removed from wishlist",
-                wishlist
+                wishlist: populatedWishlist
             });
         } else {
             return res.status(404).json({ success: false, message: "Product not found in wishlist" });
@@ -156,16 +182,19 @@ export const mergeWishlist = async (req, res) => {
                 });
                 await userWishlist.save();
                 await Wishlist.findOneAndDelete({ guestId });
-                return res.status(200).json({ success: true, message: "Wishlist merged successfully", wishlist: userWishlist });
+                const populatedWishlist = await populateWishlistItems(userWishlist);
+                return res.status(200).json({ success: true, message: "Wishlist merged successfully", wishlist: populatedWishlist });
             } else {
                 guestWishlist.user = req.user._id;
                 guestWishlist.guestId = undefined;
                 await guestWishlist.save();
-                return res.status(200).json({ success: true, message: "Wishlist assigned to user", wishlist: guestWishlist });
+                const populatedWishlist = await populateWishlistItems(guestWishlist);
+                return res.status(200).json({ success: true, message: "Wishlist assigned to user", wishlist: populatedWishlist });
             }
         } else {
             if (userWishlist) {
-                return res.status(200).json({ success: true, message: "User wishlist retrieved", wishlist: userWishlist });
+                const populatedWishlist = await populateWishlistItems(userWishlist);
+                return res.status(200).json({ success: true, message: "User wishlist retrieved", wishlist: populatedWishlist });
             }
             res.status(404).json({ message: "Guest wishlist not found" });
         }

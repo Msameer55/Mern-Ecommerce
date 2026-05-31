@@ -1,5 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
+dotenv.config();
 import cors from "cors"
 import { connect } from "./config/connect.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -18,7 +19,6 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 const app = express();
 app.use(express.json());
 app.use(cors());
-dotenv.config();
 
 //  Connect to mongo db 
 connect();

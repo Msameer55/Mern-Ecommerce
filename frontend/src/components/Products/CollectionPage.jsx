@@ -79,7 +79,7 @@ const CollectionPage = () => {
             <div className="flex justify-between items-center w-full">
               <div className="heading mb-10">
                 <h4 className="text-4xl font-semibold tracking-tighter">
-                  {filterNames} Collection
+                  {filterNames.charAt(0).toUpperCase() + filterNames.slice(1)} Collection
                 </h4>
               </div>
               <div className="sort-option lg:block hidden">

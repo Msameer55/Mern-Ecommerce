@@ -64,16 +64,16 @@ const Navbar = () => {
                   All Collections
                 </NavLink>
                 <NavLink
-                  to="/collections/all?gender=Mens"
+                  to="/collections/all?gender=men"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
-                  Mens
+                  Men
                 </NavLink>
                 <NavLink
-                  to="/collections/all?gender=Womens"
+                  to="/collections/all?gender=women"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
-                  Womens
+                  Women
                 </NavLink>
                 <NavLink
                   to="/collections/all?category=Top Wear"

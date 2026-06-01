@@ -4,8 +4,10 @@ import Product from "./Product";
 import { useParams } from "react-router-dom";
 import { fakeData } from "../fakeData/ProductData";
 import {
-  fetchSimilarProductById,
+fetchSimilarProductById,
   fetchSingleProduct,
+  getSimilarProduct,
+  getSingleProduct,
 } from "../../redux/slice/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSpinner from "../ReactSpinner";

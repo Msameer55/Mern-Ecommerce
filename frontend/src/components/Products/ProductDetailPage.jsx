@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Product from "./Product";
 import { useParams } from "react-router-dom";
-import { fakeData } from "../fakeData/ProductData";
 import {
-fetchSimilarProductById,
+  fetchSimilarProductById,
   fetchSingleProduct,
-  getSimilarProduct,
-  getSingleProduct,
 } from "../../redux/slice/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSpinner from "../ReactSpinner";
 import { addToCart } from "../../redux/slice/cartSlice";
 import StarRating from "../Common/StarRating";
-import { FaHeart, FaHeartBroken, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import TooltipIcon from "../Common/Tooltip";
 import {
   addWishListItemsSlice,
@@ -105,14 +102,6 @@ const ProductDetailPage = () => {
       toast.error(error.message || "Failed to remove product from wishlist");
     }
   };
-
-  // Fetch single product + similar products whenever the id changes
-  useEffect(() => {
-    if (id) {
-      dispatch(getSingleProduct(id));
-      dispatch(getSimilarProduct(id));
-    }
-  }, [id, dispatch]);
 
   // Sync selectedImage when productData changes
   useEffect(() => {

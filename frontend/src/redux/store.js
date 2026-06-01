@@ -8,7 +8,7 @@ import adminSlice from "./slice/adminSlice";
 import adminProductSlice from "./slice/adminProductSlice";
 import adminOrderSlice from "./slice/adminOrderSlice";
 import subscriberSlice from "./slice/subscriberSlice";
-import wishListSlice from "./slice/wishListSlice";
+import wishListSlice from "./slice/wishlistSlice";
 
 const store = configureStore({
     reducer: {
@@ -21,7 +21,7 @@ const store = configureStore({
         adminProduct: adminProductSlice,
         adminOrder: adminOrderSlice,
         subscriber: subscriberSlice,
-        wishlist : wishListSlice
+        wishlist: wishListSlice
     }
 });
 

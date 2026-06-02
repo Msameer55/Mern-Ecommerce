@@ -18,7 +18,22 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    process.env.FRONTEND_URL,          // e.g. https://your-app.vercel.app
+].filter(Boolean);
+
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (Postman, curl, mobile apps)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: origin '${origin}' not allowed`));
+    },
+    credentials: true,
+}));
 
 //  Connect to mongo db 
 connect();

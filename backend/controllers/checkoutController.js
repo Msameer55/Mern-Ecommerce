@@ -1,38 +1,82 @@
-import transporter from "../config/nodemailer.js";
 import Cart from "../models/Cart.js";
 import { Checkout } from "../models/Checkout.js";
 import { Order } from "../models/Order.js";
 import User from "../models/User.js";
+import axios from "axios";
 
 // Helpers 
 const sendPaymentSuccessEmail = async (email, paymentDetails, paymentMethod) => {
-    await transporter.sendMail({
-        from: `"ShopNow" <${process.env.SENDER_EMAIL}>`,
-        to: email, subject: "Payment Successful - ShopNow",
-        html: ` 
-        <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px;background:#ffffff;"> 
-        <h2 style="color:#111827;margin-bottom:12px;"> Payment Successful 🎉 </h2> 
-        <p style="color:#4b5563;font-size:15px;line-height:24px;"> 
-        Your payment has been received successfully. </p>
-         <div style="background:#f9fafb;padding:18px;border-radius:10px;margin:24px 0;">
-        <p style="margin:0 0 10px 0;color:#111827;">
-        <strong>Payment Status:</strong> Paid </p>
-        <p style="margin:0 0 10px 0;color:#111827;"> <strong>Transaction ID:</strong>
-        ${paymentDetails?.id || "N/A"} </p> <p style="margin:0;color:#111827;">
-        <strong>Method Type:</strong>
-        ${paymentMethod !== "cod"
-                ? `<p style="margin:0;color:#111827;">
-        <strong>Method Type:</strong>
-        ${paymentDetails?.payment_method_types?.[0] || "Online Payment"}
-        </p>`
-                : ""
+  const data = {
+    sender: {
+      name: "ShopNow",
+      email: process.env.SENDER_EMAIL,
+    },
+    to: [{ email }],
+    subject: "Payment Successful - ShopNow 🎉",
+    htmlContent: `
+      <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px;background:#ffffff;">
+        
+        <h2 style="color:#111827;margin-bottom:12px;">
+          Payment Successful 🎉
+        </h2>
+
+        <p style="color:#4b5563;font-size:15px;line-height:24px;">
+          Your payment has been received successfully.
+        </p>
+
+        <div style="background:#f9fafb;padding:18px;border-radius:10px;margin:24px 0;">
+          
+          <p style="margin:0 0 10px 0;color:#111827;">
+            <strong>Payment Status:</strong> Paid
+          </p>
+
+          <p style="margin:0 0 10px 0;color:#111827;">
+            <strong>Transaction ID:</strong> ${paymentDetails?.id || "N/A"}
+          </p>
+
+          <p style="margin:0 0 10px 0;color:#111827;">
+            <strong>Method:</strong> ${paymentMethod || "N/A"}
+          </p>
+
+          <p style="margin:0;color:#111827;">
+            <strong>Provider Method:</strong> ${
+              paymentDetails?.payment_method_types?.[0] || "Online Payment"
             }
-        <strong>Method:</strong>
-        ${paymentMethod || "Test"} </p> 
-        </div> <p style="color:#6b7280;font-size:14px;line-height:22px;">
-         We are now processing your order and you will receive another email once your order is confirmed. </p> <p style="margin-top:32px;color:#111827;"> Thank you for shopping with <strong>ShopNow</strong>. </p>
-          </div> `,
-    });
+          </p>
+
+        </div>
+
+        <p style="color:#6b7280;font-size:14px;line-height:22px;">
+          We are now processing your order. You will receive another email once your order is confirmed.
+        </p>
+
+        <p style="margin-top:32px;color:#111827;">
+          Thank you for shopping with <strong>ShopNow</strong>.
+        </p>
+
+      </div>
+    `,
+  };
+
+  try {
+    const response = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      data,
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("✅ Payment email sent via Brevo:", response.data);
+  } catch (error) {
+    console.error(
+      "❌ Payment email failed:",
+      error.response?.data || error.message
+    );
+  }
 };
 
 // @route POST /api/checkout

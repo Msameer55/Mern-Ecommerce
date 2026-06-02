@@ -19,19 +19,11 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    process.env.FRONTEND_URL,          // e.g. https://your-app.vercel.app
-].filter(Boolean);
-
+// Allow all origins — safe for a public e-commerce API.
+// origin:true mirrors back whatever origin the request came from,
+// which satisfies CORS without hardcoding any domain.
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (Postman, curl, mobile apps)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        callback(new Error(`CORS: origin '${origin}' not allowed`));
-    },
+    origin: true,
     credentials: true,
 }));
 

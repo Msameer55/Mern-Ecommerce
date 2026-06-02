@@ -12,11 +12,18 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
 
   // Email and checkout redirect are passed via router state from Register.jsx
   const email = location.state?.email || "";
   const redirect = location.state?.redirect || "/";
   const isCheckout = redirect.includes("checkout");
+
+  useEffect(() => {
+    if(user && user.name && user.email){
+      navigate("/");
+    }
+  }, [])
 
   const { loading, guestId } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);

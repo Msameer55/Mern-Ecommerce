@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import nodemailer from "nodemailer";
 
-const smtpSecure =  "true";
+const smtpSecure = process.env.SMTP_SECURE === "true";
 const smtpPort = Number(process.env.SMTP_PORT) || (smtpSecure ? 465 : 587);
 
 const transporter = nodemailer.createTransport({

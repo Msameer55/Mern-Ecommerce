@@ -4,6 +4,7 @@ import { FaFacebook } from "react-icons/fa";
 import { FaPhoneAlt } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { subscriberUser } from "../../redux/slice/subscriberSlice";
 import { toast } from "react-toastify";
 
@@ -30,7 +31,7 @@ const Footer = () => {
         <div className="flex  flex-col md:flex-row justify-between items-start">
           <div className=" col newsletter md:w-[35%] w-full">
             <h3 className="text-[16px] font-semibold ">Newsletter</h3>
-            <p className="text-[14px] my-4">
+            <p className="text-[14px] my-4 max-w-[350px]">
               Be the first to hear about our new products, exclusive events and
               online offers
             </p>
@@ -60,17 +61,17 @@ const Footer = () => {
           <div className=" col main-menus md:w-[25%] w-full">
             <h3 className="text-[16px] font-semibold mb-5">Shop</h3>
             <ul>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Mens Top Wear
+              <li className="text-[14px] font-normal">
+                <Link to="/collections/men">Mens Top Wear</Link>
               </li>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Womens Top Wear
+              <li className="text-[14px] font-normal">
+                <Link to="/collections/women">Womens Top Wear</Link>
               </li>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Mens Bottom Wear
+              <li className="text-[14px] font-normal">
+                <Link to="/collections/men-bottoms">Mens Bottom Wear</Link>
               </li>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Womens Bottom Wear
+              <li className="text-[14px] font-normal">
+                <Link to="/collections/women-bottoms">Womens Bottom Wear</Link>
               </li>
             </ul>
           </div>
@@ -78,15 +79,17 @@ const Footer = () => {
           <div className=" col quick-links md:w-[25%] w-full">
             <h3 className="text-[16px] font-semibold mb-5">Support</h3>
             <ul>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Contact Us
+              <li className="text-[14px] font-normal">
+                <Link to="/contact">Contact Us</Link>
               </li>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                About us
+              <li className="text-[14px] font-normal">
+                <Link to="/about">About us</Link>
               </li>
-              <li className="text-[14px] font-normal cursor-pointer ">FAQ's</li>
-              <li className="text-[14px] font-normal cursor-pointer ">
-                Privacy Policy
+              <li className="text-[14px] font-normal">
+                <Link to="/faq">FAQ's</Link>
+              </li>
+              <li className="text-[14px] font-normal">
+                <Link to="/privacy-policy">Privacy Policy</Link>
               </li>
             </ul>
           </div>
@@ -99,7 +102,7 @@ const Footer = () => {
               <FaInstagram />
             </div>
             <h3 className="text-[15px] font-normal mb-1">Call Us</h3>
-            <div className="flex justify0start items-center gap-2">
+            <div className="flex justify-start items-center gap-2">
               <FaPhoneAlt />
               <a href="tel:+123456789">(021) 123456789</a>
             </div>

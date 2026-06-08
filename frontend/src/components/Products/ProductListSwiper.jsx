@@ -7,7 +7,6 @@ import "swiper/css/navigation";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 import { FaArrowLeft } from "react-icons/fa";
 
-
 const ProductList = ({ title, products = [], isSwiper = true }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
@@ -34,8 +33,6 @@ const ProductList = ({ title, products = [], isSwiper = true }) => {
                 disabled={isBeginning}
               >
                 <FaArrowLeftLong />
-
-
               </button>
               <button
                 ref={nextRef}

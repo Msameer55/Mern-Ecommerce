@@ -6,6 +6,10 @@ import UserLayout from "./components/Layout/UserLayout";
 import Home from "./components/pages/Home";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
+import About from "./components/pages/About";
+import Contact from "./components/pages/Contact";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy";
+import FAQ from "./components/pages/FAQ";
 import VerifyOtp from "./components/pages/VerifyOtp";
 import Profile from "./components/pages/Profile";
 import CollectionPage from "./components/Products/CollectionPage";
@@ -26,6 +30,7 @@ import ProtectedRoute from "./components/Common/ProtectedRoute";
 import SubscribeUsers from "./components/pages/Admin/SubscribeUsers";
 import ForgotPasswordPage from "./components/pages/ForgotPasswordPage";
 import ResetPassword from "./components/pages/ResetPassword";
+import AiWidget from "./components/Ai/AiWidget";
 
 const App = () => {
 
@@ -34,6 +39,7 @@ const App = () => {
       <BrowserRouter>
         <ToastContainer style={{ zIndex: 99999 }} position="top-right" autoClose={3000} />
         <ScrollToTop />
+        <AiWidget />
         <Routes>
           {/* User Layout */}
           <Route path="/" element={<UserLayout />}>
@@ -42,6 +48,10 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route
               path="/profile"

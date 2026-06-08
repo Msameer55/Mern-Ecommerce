@@ -15,6 +15,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import adminProductRoutes from "./routes/adminProductRoutes.js";
 import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
+import aiRouter from "./routes/aiRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -49,6 +50,9 @@ app.use("/api/subscriber", subscriberRoutes);
 app.use("/api/admin/users", adminRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
+
+// AI Response 
+app.use("/api/chat", aiRouter);
 
 app.get("/", (req, res) => {
     res.send("Hello world")

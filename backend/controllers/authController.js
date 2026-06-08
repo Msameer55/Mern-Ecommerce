@@ -55,21 +55,6 @@ const sendOTPEmail = async (email, otp) => {
 };
 
 const sendForgotPassEmail = async (email, token) => {
-<<<<<<< HEAD
-    await transporter.sendMail({
-        from: `"ShopNow" <${process.env.SENDER_EMAIL}>`,
-        to: email,
-        subject: "Reset Password",
-        html: `
-            <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px;">
-                <h2 style="color:#111827;margin-bottom:8px;">Reset your password</h2>
-                <p style="color:#6b7280;">Use the reset link below. It expires in <strong>15 minutes</strong>.</p>
-                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${token}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;margin:16px 0;">Reset Password</a>
-                <p style="color:#9ca3af;font-size:13px;">If you did not create an account, you can safely ignore this email.</p>
-            </div>
-        `,
-    });
-=======
   const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${token}`;
 
   const data = {
@@ -110,7 +95,6 @@ const sendForgotPassEmail = async (email, token) => {
   );
 
   console.log("✅ Reset password email sent via Brevo:", response.data);
->>>>>>> da0c1fc (new-changes)
 };
 
 // ─── Register ────────────────────────────────────────────────────────────────
@@ -495,11 +479,8 @@ export const getProfile = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-<<<<<<< HEAD
-=======
     res.status(200).json({ success: true, message: "User found", user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
->>>>>>> da0c1fc (new-changes)
 };

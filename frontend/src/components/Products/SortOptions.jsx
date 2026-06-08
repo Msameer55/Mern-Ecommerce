@@ -18,7 +18,7 @@ const SortOptions = () => {
   };
 
   return (
-    <div className="mb-4 flex items-center justify-end">
+    <div className=" flex items-center justify-end">
       <select
         id="sort"
         onChange={handleSortChange}

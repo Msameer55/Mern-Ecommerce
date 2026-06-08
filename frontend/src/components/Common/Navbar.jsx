@@ -47,41 +47,43 @@ const Navbar = () => {
             <div
               className={` 
             fixed top-0 left-0 w-full h-full bg-white shadow-2xl
-            transition-transform duration-300  z-9999 p-5
+            transition-transform duration-300  z-9999 md:z-1 p-5
             md:relative md:shadow-none md:w-auto md:p-0 md:h-auto
             ${isMenuOpen ? "-translate-x-0 md:translate-none" : "-translate-x-full md:translate-none"}
           `}
             >
-              {isMenuOpen && (
-                <div className="fixed inset-0 bg-black opacity-5"></div>
-              )}
 
               <div className="nav-links flex flex-col items-left space-x-6 md:justify-between md:items-center  md:flex-row mt-5 md:mt-0">
                 <NavLink
-                  to="/collections/men"
+                  to="/collections/all"
+                  onClick={() => setIsMenuOpen(false)}
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   All Collections
                 </NavLink>
                 <NavLink
+                onClick={() => setIsMenuOpen(false)}
                   to="/collections/all?gender=men"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   Men
                 </NavLink>
                 <NavLink
+                onClick={() => setIsMenuOpen(false)}
                   to="/collections/all?gender=women"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   Women
                 </NavLink>
                 <NavLink
+                onClick={() => setIsMenuOpen(false)}
                   to="/collections/all?category=Top Wear"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
                   TopWear
                 </NavLink>
                 <NavLink
+                onClick={() => setIsMenuOpen(false)}
                   to="/collections/all?category=Bottom Wear"
                   className="text-gray-700 hover:text-black text-[14px] uppercase p-3 md:p-0"
                 >
@@ -111,7 +113,7 @@ const Navbar = () => {
                 <button
                   className="relative hover:text-black cursor-pointer"
                   onClick={toggleCartDrawer}
-                >
+                 >
                   <HiOutlineShoppingBag className="h-6 w-6 text-gray-600  cursor-pointer" />
                   <span className="absolute -top-1 right-0 bg-[#ea2e0e] text-white rounded-full w-4 h-4 flex justify-center items-center text-[12px]">
                     {cartItems && cartItems.length > 0 ? cartItems.length : 0}

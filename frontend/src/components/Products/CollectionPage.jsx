@@ -8,6 +8,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { filterProductsByQuery } from "../../redux/slice/productSlice";
 import { toast } from "react-toastify";
+import ReactSpinner from "../ReactSpinner";
 
 const CollectionPage = () => {
   const { collection } = useParams();
@@ -51,8 +52,11 @@ const CollectionPage = () => {
       document.removeEventListener("mousedown", closeSidebar);
     };
   }, []);
-
+if (loading){
+  return <ReactSpinner />
+}
   return (
+    
     <div className="collection-page p-4 md:p-6 my-6">
       <div className="container max-w-9xl m-auto">
         <div className="flex gap-10 flex-col md:flex-row">
@@ -86,7 +90,7 @@ const CollectionPage = () => {
                 <SortOptions />
               </div>
             </div>
-            <div className="product-grid-main grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="product-grid-main grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {products?.length > 0 ? (
                 products.map((item) => (
                   <Product key={item._id} product={item} loading={loading} />

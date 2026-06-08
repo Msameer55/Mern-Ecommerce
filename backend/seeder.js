@@ -14,16 +14,16 @@ export const seedData = async () => {
         // delete existing data 
         await Product.deleteMany();
         console.log("products has been deleting");
-        await User.deleteMany();
+        // await User.deleteMany();
         console.log("User has been deleting");
-        await Cart.deleteMany();
+        // await Cart.deleteMany();
         console.log("Cart has been deleting");
 
         const hashedPass = await bcrypt.hash("123456", 10);
         // Create Default Admin User 
         const createUser = await User.create({
-            name: "Admin2",
-            email: "admin2@example.com",
+            name: "Admin3",
+            email: "admin3@example.com",
             password: hashedPass,
             role: "admin",
             otp: "",

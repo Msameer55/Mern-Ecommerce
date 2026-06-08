@@ -130,11 +130,11 @@ const Login = () => {
 
               {/* Right Side - Image */}
               <div className="image-section hidden md:block md:w-1/2 h-full">
-                {/* <img
+                <img
                   src="/assets/womens-collection.webp"
                   alt=""
                   className="w-full h-full object-cover"
-                /> */}
+                />
               </div>
             </div>
           </div>
